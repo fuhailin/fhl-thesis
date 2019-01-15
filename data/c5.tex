@@ -1,0 +1,281 @@
+﻿\chapter{实验结果与分析}
+\section{数据集介绍}
+本文设计了两组实验，一组是关键词抽取，另外%
+一组是学者推荐。因此，需要对两组实验的实%
+验结果分别进行验证。关键词抽取部分，本文选%
+用KDD、WWW以及Hulth2003三个数据集上进行实验，%
+在关键词抽取部分的实验评估中，都将作者给定的%
+元关键词作为正确的标准，以上数据的详细内容可查看表\ref{tab:dataset}。为了验证本文提出的学%
+者推荐模型的可用性，本文通过搜索关键词从微软%
+学术官网上爬取学术论文数据集进行实验
+\footnote{\url{https://academic.microsoft.com}}。%
+
+\subsection{KDD和WWW}
+数据集KDD和WWW分别是从知识发现与数据挖%
+掘(Knowledge Discovery and Data Mining)顶级会议和万维网%
+(World Wide Web Conference)上搜集的真实科技论文数据，这两个数%
+据都包括论文的题目、摘要、作者给定的关键词三个字段。
+\subsection{Hulth2003}
+数据集Hulth2003来自于Inspec数据库，Hulth在2003年时搜集的从1998年%
+到2002年期间的期刊论文，该数据集中包含摘要和关键词，每篇摘要都被人工分配了%
+两个关键词，其中一个集合中的关键词是Inspec数据库的词库中能已经包含的词，%
+但另外一个集合是专家认为跟这篇论文比较匹配的关键词就能被确定为关键词，%
+而不会受到Inspec词库的限制，本文的实验选用后一种关键词集进行实验。
+
+\begin{table}[htbp]
+\centering
+\caption{数据集}
+\label{tab:dataset}
+\begin{minipage}[t]{0.9\linewidth}
+\begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c
+@{\extracolsep{\fill}} c @{\extracolsep{\fill}} c }
+\toprule[1.5pt]
+{\hei 数据集} & {\hei 类型} & {\hei 语言}
+ & {\hei 数量}\\
+\midrule[1pt]
+WWW & 论文摘要 & 英文 &  1330\\
+KDD & 论文摘要 & 英文 &  755\\
+Hulth03 & 论文摘要 & 英文 & 500\\
+\bottomrule[1.5pt]
+\end{tabular*}
+\label{tab3}
+\end{minipage}
+\end{table}
+\subsection{微软学术论文数据}
+本文通过搜索“hfmd”(手足口病)、“t2dm”(二型糖尿病)、“pneumonia”(肺炎)%
+和“cancer”(癌症)四个关键词从微软学术网站上爬取了2015年到2017年的生物医%
+学文献数据。其中包括论文标题、摘要、作者三个属性。
+
+\section{评价指标}
+\subsection{关键词抽取评价指标}
+在关键词抽取工作中，提出过很多评价方法，其中最为常用的是准确%
+率(Precision)、召回率(Recall)、准确率和召回率的调和平均数F1值(F1-score和MRR，%
+本文也选用这三种评价指标验证关键词抽取算法的有效性。
+
+\textbf{准确率}又名查准率，本文中通过将算法自动抽取的关键词和人工标记的关键词进行交集运算，%
+例如：同一篇论文摘要，算法自动抽取出的Top
+4关键词集合为 $E(k) = \{"hfmd","EV71","a16","encephalitis"\}$，
+人工标注的关键词集合为
+$S(k) = \{"hfmd","enterovirus 71"," coxsackie virus","Picornaviridae"\}$， 两个集合的交集为\{“hfmd”\}，所以正确抽取的关键词个数为1个。因此，准确率、召回率和F1值的公式~(\ref{equ:chap05:extP})~(\ref{equ:chap05:extR})~(\ref{equ:chap05:extF1})所示：
+\begin{equation}
+\label{equ:chap05:extP}
+Precision = \frac{E(k) \cap S(k)}{E(k)}
+\end{equation}
+\begin{equation}
+\label{equ:chap05:extR}
+Recall = \frac{E(k) \cap S(k)}{S(k)}
+\end{equation}
+\begin{equation}
+\label{equ:chap05:extF1}
+F1-score = \frac{2*Precision*Recall}{Precision+Recall}
+\end{equation}
+
+\subsection{学者推荐评价指标}
+在学者推荐实验中，我们在微软学术数据上进行实验，%
+针对无标签数据，本文通过采用对比的方式进行结果%
+评价，即将本模型的推荐结果与微软学%
+术的推荐列表进行对比。该设计的灵感源自于关键词抽取的评价标准，将微软学术官网的学者推%
+荐列表作为正确结果，当用户搜索关键词后，%
+微软学术会根据搜索%
+的关键词推荐相应的学者，因此本文在无标签的情况下，为了验证模型有效性，就通过与权威的结果进行比对%
+以此证明实验的可行性。微软学术的推荐结果可能是综合考虑多%
+项指标之后，例如文献的引用次数、下载量、影响因%
+子，作者的影响力、发文数量等，本文是在仅仅只有%
+文本数据，而没有其他相关指标的情况下设计的推荐%
+模型。通过查阅文献还发现，部分学者也曾在文献中%
+提出将自己算法的%
+实验结果截图和比较权威的机构或者公司的结果截图%
+作定性的对比，针对无标签的数据，该设计方案%
+有一定的迁移意义。下图~\ref{fig:t2dm}左侧即为在微软学%
+术官网搜索关键词"t2dm"(二型糖尿病)后推荐20个学者的列表%
+，右侧为检索"t2dm"时相关的文献列表。本文%
+取Top20、Top10、Top5三种结果，若本模型推荐%
+的前10个学者中有6个在微软学术推荐的列表中出现，%
+那么该模型的正确率为P(top10) = 6/10，召回率为R(top10) = 6/20。同理，若本模型推荐的前5个学者中有2个在微软学%
+术推荐的列表中出现，那么该模型的正确率为%
+P(top5) = 2/5,召回率为R(top5) = 2/20。
+因此，学者推荐的评价公式
+准确率、召回率和F1值的公式如~(\ref{equ:chap05:recomP})~(\ref{equ:chap05:recomR})~(\ref{equ:chap05:recomF1})所示：
+\begin{equation}
+\label{equ:chap05:recomP}
+P = \frac{R(u) \cap T(u)}{R(u)}
+\end{equation}
+\begin{equation}
+\label{equ:chap05:recomR}
+R = \frac{R(u) \cap T(u)}{T(u)}
+\end{equation}
+\begin{equation}
+\label{equ:chap05:recomF1}
+F1-score = \frac{2*P*R}{P+R}
+\end{equation}
+
+\begin{figure}[htbp] % use float package if you want it here
+  \centering
+  \includegraphics[width=\textwidth]{t2dm.png}
+  \caption{红色方框列表则为在微软学术官网检索关键词“t2dm”时的推荐结果}
+  \label{fig:t2dm}
+\end{figure}
+
+\section{实验结果与分析}
+
+\subsection{关键词抽取结果}
+
+\begin{table}[htbp]
+\centering
+\caption{关键词抽取准确率结果}
+\label{tab:recommend}
+\begin{minipage}[t]{0.9\linewidth}
+\begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c }
+\toprule[1.5pt]
+{\hei Dataset} & {\hei Method} & {\hei Top2}
+ & {\hei Top4} & {\hei Top6} & {\hei Top8} \\
+\midrule[1pt]
+    & TF-IDF & 11.4 & 8.3 & 6.5 & 5.5 \\
+KDD & TextRank & 9.5 & 8.1 & 7.1 & 6.3 \\
+    & 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\hline
+    & TF-IDF & 12.2 & 9.1 & 7.0 & 5.8 \\
+WWW & TextRank & 11.7 & 10.1 & 8.4 & 7.4 \\
+    & 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\hline
+    & TF-IDF & 0.5 & 0.15 & 0.1 \\
+Hulth03 & TextRank & 0.55 & 0.15 & 0.0 \\
+    & 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\bottomrule[1.5pt]
+\end{tabular*}
+\label{tab3}
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{关键词抽取召回率结果}
+\label{tab:recommend}
+\begin{minipage}[t]{0.9\linewidth}
+\begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c }
+\toprule[1.5pt]
+{\hei Dataset} & {\hei Method} & {\hei Top2}
+ & {\hei Top4} & {\hei Top6} & {\hei Top8} \\
+\midrule[1pt]
+    & TF-IDF & 5.6 & 7.9 & 9.2 & 10.2 \\
+KDD & TextRank & 4.6 & 7.7 & 9.9 & 11.8 \\
+    & 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\hline
+    & TF-IDF & 5.4 & 7.3 & 8.4 & 9.2 \\
+WWW & TextRank & 4.8 & 8.2 & 10.1 & 11.7 \\
+    & 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\hline
+    & TF-IDF & 5.6 & 7.9 & 9.2 & 10.2 \\
+Hulth03 & TextRank & 0.55 & 0.15 & 0.0 \\
+    & 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\bottomrule[1.5pt]
+\end{tabular*}
+\label{tab3}
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{关键词抽取F1-score结果}
+\label{tab:recommend}
+\begin{minipage}[t]{0.9\linewidth}
+\begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c }
+\toprule[1.5pt]
+{\hei Dataset} & {\hei Method} & {\hei Top2}
+ & {\hei Top4} & {\hei Top6} & {\hei Top8} \\
+\midrule[1pt]
+& TF-IDF & 7.5 & 8.1 & 7.6 & 7.1 \\
+KDD & TextRank & 6.2 & 7.9 & 8.3 & 8.2 \\
+& 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\hline
+& TF-IDF & 7.1 & 8.1 & 7.7 & 7.1 \\
+WWW & TextRank & 6.8 & 9.0 & 9.1 & 9.1 \\
+& 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\hline
+& TF-IDF & 0.5 & 0.15 & 0.1 \\
+Hulth03 & TextRank & 0.55 & 0.15 & 0.0 \\
+& 融合后的算法 & 0.55 & 0.2 & 0.15 \\
+\bottomrule[1.5pt]
+\end{tabular*}
+\label{tab3}
+\end{minipage}
+\end{table}
+
+\subsection{学者推荐结果}
+
+\begin{table}[htbp]
+\centering
+\caption{使用多种算法从关键词网络中选出核心节点的推荐结果表。}
+\label{tab:recommend}
+\begin{minipage}[t]{0.9\linewidth}
+\begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c}
+\toprule[1.5pt]
+{\hei Dataset} & {\hei Method} & {\hei Top20}
+ & {\hei Top10} & {\hei Top5} \\
+ 
+\midrule[1pt]
+& Degree Centrality & 0.5 & 0.15 & 0.1 \\
+
+& Closeness Centrality & 0.55 & 0.15 & 0.0 \\
+
+& Eigenvecter Centrality & 0.55 & 0.2 & 0.15 \\
+
+HFMD & Jaccard & 0.4 & 0.35 & \textbf{0.25} \\
+
+& Wang's method & \textbf{0.55} & \textbf{0.35} & 0.2 \\
+
+& Liu's method & 0.45 & 0.25 & 0.0 \\
+
+\hline
+& Degree Centrality & 0.2 & 0.2 & 0.2 \\
+
+& Closeness Centrality & 0.25 & 0.2 & 0.2 \\
+ 
+& Eigenvecter Centrality & 0.2 & 0.0 & 0.0 \\
+ 
+T2DM & Jaccard & 0.2 & 0.15 & 0.0 \\
+ 
+& Wang's method & 0.2 & 0.0 & 0.0 \\
+ 
+& Liu's method & \textbf{0.35} & \textbf{0.35} & \textbf{0.2} \\
+
+\hline
+ & Degree Centrality & 0.15 & 0.1 & 0.05 \\
+
+& Closeness Centrality & 0.15 & 0.1 & 0.05 \\
+
+& Eigenvecter Centrality & 0.15 & 0.1 & 0.05 \\
+
+Pneumonia & Jaccard & \textbf{0.15} & \textbf{0.15} & \textbf{0.05} \\
+
+& Wang's method & 0.15 & 0.1 & 0.05 \\
+
+& Liu's method & 0.15 & 0.1 & 0.05 \\
+
+\hline
+
+ & Degree Centrality & 0.05 & 0.0 & 0.0 \\
+
+& Closeness Centrality & 0.05 & 0.0 & 0.0 \\
+
+& Eigenvecter Centrality & 0.05 & 0.05 & 0.05 \\
+
+Cancer & Jaccard & \textbf{0.15} & \textbf{0.1} & 0.0 \\
+
+& Wang's method & 0.05 & 0.05 & \textbf{0.05} \\
+
+& Liu's method & -- & -- & -- \\
+\bottomrule[1.5pt]
+\end{tabular*}
+\label{tab3}
+\end{minipage}
+\end{table}
+
+
+
+\subsection{结果分析}
+
+\section{本章小结}
+
+
+

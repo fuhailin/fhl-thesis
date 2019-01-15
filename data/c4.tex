@@ -1,0 +1,59 @@
+﻿\chapter{基于聚类的关键词抽取}
+关键词抽取任务通常包括三个基本步骤，实验的方法多种多样，可基于句子抽取，也可以基于内容理解的抽取，又或者是基于%
+结构的抽取方法等等，无论什么方法被采用，基本上都会面临三个重要的问题，其一是文档冗余信息的识别及处理；%
+其二是对核心关键词的定位识别；其三则是生成的词或短语的可读性和连贯性。宗成庆老%
+师\upcite{宗成庆2013统计自然语言处理}对识别冗余信息的方法总结为两种%
+.
+\section{数据预处理}
+对每个数据集，本文都使用以下的数据预处理步骤：%
+首先对文本进行句子切割、分词和词性标注。对候选短语的打分采用如下策略，如公式~(\ref{equ:chap04:phrase})
+\begin{equation}
+\label{equ:chap04:phrase}
+PhraseScore(p_i) = \sum\limits_{{w_j}\in {p_i}} WordScore(w_j)
+\end{equation}
+
+\section{对比算法}
+
+\textbf{TFIDF}(term frequency-inverse %
+document frequency)是基于统计的算法，对论文的摘要进行关键词抽取，%
+TF是指该词在文本中出现的频率，%
+可以用来描述文档内容；IDF是该词的逆文档频率，%
+是用来衡量该词区分分档的能力。TFIDF的为两个公式的乘积，如~(\ref{equ:chap04:tfidf})所示。
+
+\begin{equation}
+\label{equ:chap04:tfidf}
+TFIDF = {\frac{n_i}{N_j}*\log\frac{|D|}{|D_i| + 1}}
+\end{equation}
+
+其中N表示文档j中包含的词的总量，n表示词i出现在文档j中的词频。%
+$|D|$表示语料库中总的文档数量，$|D_i|$表示语料库中包%
+含词i的文档数量。%
+
+\textbf{TextRank}基于词共现的特征-TextRank
+
+\textbf{PositionRank}基于位置的特征-Position PageRank
+
+\textbf{TopicRank}本文是基于TopicRank的一个改进算法，%
+首先通过将候选集中的短语通过聚类划分为主题，即主题便是由%
+候选集中的短语的子集表示，
+再将聚类后得到的主题作为构建完全图的节点，该图的边则是通过计算不同主题之间词与词%
+之间的语义关系得到图的权重，%
+最后采用基于随机游走的PageRank算法为每个主题的排序，最后从每个主题中选出一个候选词%
+作为关键词。该特征的获取需要进行的计算包括主题聚类、构建图和PageRank给节点打分，%
+因此，相比较前面几种算法而言，该算法的速度相对缓慢。接下来将着重介绍TopicRank%
+识别和定义主题的原理及本文对其进行改进的点。%
+
+\section{关键词抽取聚合排序算法}
+
+
+\subsection{算法描述}
+\subsection{算法实现}
+Borda Count
+Schulze方法
+Weighted Majority Voting
+
+
+\section{本章小结}
+
+
+
