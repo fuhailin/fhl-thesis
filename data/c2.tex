@@ -1,4 +1,5 @@
-﻿\chapter{相关理论}
+﻿%!TEX root = ../document.tex
+\chapter{个性化推荐、序列感知推荐及迁移学习}
 \section{推荐系统}
 推荐系统的定义和概念很多，但1997年Resnick和Varian给出的定义%
 被广泛接受，既“推荐系统是利用电子商务网站向客户提供商品信息%
@@ -73,7 +74,7 @@
 商家产品的销售额，而长尾商品却仅仅只能代表小部分用户的需求，%
 所以只能充分发掘用户的行为，研究用户的兴趣，以此找到用户的个性化需求。%
 所以，推荐系统可以更好地发掘数据的长尾。
-\section{关键词抽取}
+\section{序列感知模型}
 关键词抽取是从文本中提取出重要的短语或词。关键词背%
 后所蕴含的丰富信息%
 可以高度概括一篇文章的主题信息，该问题一直是自然语言处理中基础问题，也是研究的热点问题，关键词的研究成果被广泛的应用在%
@@ -92,42 +93,39 @@ Hasan\upcite{hasan2014automatic}通过全面调研总结了目前研究%
 些存在的问题作为研究思路。%
 
 
-\subsection{关键词抽取流程}
+\subsection{序列感知推荐任务及场景}
+
+当待分析的数据具有固有的顺序性质，序列学习方法就会在这些应用领域中有用，比较常见的应用有如自然语言处理、语音识别、时间序列预测、DNA建模，以及作为本文工作的核心内容，序列感知推荐。
 
 
-\subsection{候选关键词特征}
+\subsection{序列感知推荐技术分类}
 
+\textbf{频繁集挖掘}
 
-\subsection{关键词抽取方法}
-关键词抽取主要被分为两个大方向，即有监督和无监督。由于有监督学习%
-需要大量的人工标注，因此，在实际应用中，无监督的方式用得更加%
-广泛。
-有监督算法\upcite{eichler2010dfki}提出的基于SVM分类器的%
-有监督的关键词抽取，%
-caragea\upcite{caragea2014citation}提出基于引文网络的特征，
-在无监督算法中，
-florescu\upcite{florescu2017positionrank}提出了基于位置特征改进TextRank的无监督自动关键词抽取算法。
+\textbf{马尔可夫链}
 
-\subsubsection{无监督抽取}
-
-
-\subsubsection{有监督抽取}
-在有监督的研究上常常把关键词抽取任务看成二分类问题，%
-对候选关键词进行分类，即是关键词或不是关键词。%
-首先建立分类器，分类器可以是朴素贝叶斯\upcite{bulgarov2015comparison}、决策树\upcite{sterckx2016supervised}%
-逻辑回归等。建好分类器后再用大量已经标注好的语料去训练分类器，%
-再用训练好的分类器完成信息的自动抽取。%
-在有监督问题中，通常被选用的特征有词性、词频、%
-词位置(首次出现位置、平均位置、最后出现的位置等)%
-和外部知识库等。不同的特征适用于不同的分类器。
+\textbf{循环神经网络}
+循环神经网络被发明的目的就是用来进行对可变长度的序列数据进行建模。循环神经网络与传统的前馈深度神经网络模型之间的主要区别在于组成网络的单元中存在内部隐藏状态。对于一个标准的循环神经网络其通过以下形式来更新隐藏单元的状态$h$：
 
 
 
-，如k-core、信息熵
+
+\textbf{门控循环单元Gated Recurrent Unit}
+
+\textbf{长短期记忆神经网络}
+
+\textbf{双向循环神经网络}
 
 
 
-\section{学术社交网络}
+
+
+
+\subsection{序列感知推荐算法评价指标}
+
+
+
+\section{迁移学习}
 学术社交网络能为具有共同兴趣的科研工作者提供%
 一个实时沟通、共享成果的平台。目前，学术社%
 交网络的发展很迅速，其覆盖的面也非常广泛，%
@@ -199,6 +197,15 @@ ONE上的一篇文章表示，上传到Academia.edu的论文的5年内的引用�
 \textbf{Microsoft Academic}\footnote{\url{https://academic.microsoft.com}}
 \textbf{Google Scholar}\footnote{\url{https://academic.microsoft.com}}
 \textbf{百度学术}\footnote{\url{https://academic.microsoft.com}}
+
+\subsubsection{迁移学习研究内容}
+
+
+\subsubsection{迁移学习分类}
+
+\subsubsection{迁移学习方法}
+
+\subsubsection{迁移学习面临的问题}
 
 \section{本章小结}
 
