@@ -1,4 +1,4 @@
-﻿%!TEX root = ../document.tex
+%!TEX root = ../document.tex
 \chapter{个性化推荐、序列感知推荐及迁移学习}
 \section{推荐系统}
 推荐系统的定义和概念很多，但1997年Resnick和Varian给出的定义%
@@ -74,23 +74,10 @@
 商家产品的销售额，而长尾商品却仅仅只能代表小部分用户的需求，%
 所以只能充分发掘用户的行为，研究用户的兴趣，以此找到用户的个性化需求。%
 所以，推荐系统可以更好地发掘数据的长尾。
+
+
 \section{序列感知模型}
-关键词抽取是从文本中提取出重要的短语或词。关键词背%
-后所蕴含的丰富信息%
-可以高度概括一篇文章的主题信息，该问题一直是自然语言处理中基础问题，也是研究的热点问题，关键词的研究成果被广泛的应用在%
-文本分类、聚类、文本摘要、话题监测、索引和搜索等领%
-域\upcite{caragea2014citation,常耀2018成关键词提取算法综述,lopez2010humb,bougouin2013topicrank}。%
-早于20世纪80年代已经有研究者用TF-IDF进行关键词的抽取。%
-随着研究不断的推荐，近年来研究者们不断的提出新的特征或算法，%
-如florescu\upcite{florescu2017positionrank}提出计算词出现的平均位置，%
-caragea\upcite{caragea2014citation}引入引文的特征等。%
-对未来的性能提升方面，常耀成表示可以综合利用现有特征或提出新特征%
-\upcite{常耀2018成关键词提取算法综述}。%
-赵京胜等人通过从各个维度综述前人的工作后也提出了关键词抽取%
-人物未来的发展方向\upcite{赵京胜2017自动关键词抽取研究综述}。%
-Hasan\upcite{hasan2014automatic}通过全面调研总结了目前研究%
-关键词抽取人物准确率普遍很低的原因，研究者也可以通过解决这%
-些存在的问题作为研究思路。%
+序列感知模型是把数据根据时间日期排序之后，按照数据之间的时间先后顺序，发现时间上近邻的数据之间的隐藏关系或数据的周期性变化规律等与时间有关系的一类数据挖掘模型，数据挖掘领域又常称这类模型为时序模型。因此序列感知模型面对的数据必须包含时间戳或者数据的存储形式能够不丢失数据的诞生先后顺序。时序模型数据分析的目的就是为了挖掘出数据之间的内在时间规律，找到这种时间规律之后利用其归纳、类推、演绎未来的数据变化趋势，从而进行建模样本之外的数据预测。
 
 
 \subsection{序列感知推荐任务及场景}
@@ -105,14 +92,52 @@ Hasan\upcite{hasan2014automatic}通过全面调研总结了目前研究%
 \textbf{马尔可夫链}
 
 \textbf{循环神经网络}
-循环神经网络被发明的目的就是用来进行对可变长度的序列数据进行建模。循环神经网络与传统的前馈深度神经网络模型之间的主要区别在于组成网络的单元中存在内部隐藏状态。对于一个标准的循环神经网络其通过以下形式来更新隐藏单元的状态$h$：
 
+因为传统前馈深度神经网络(FNN)无法了解给定输入的上下文环境关系，循环神经网络(RNN)\cite{RNN1994}被发明的目的就是用来进行对可变长度的序列数据进行建模。循环神经网络与传统的FNN模型之间的主要区别在于组成网络的单元中存在内部隐藏状态，在一个序列建模步骤中的每个内部隐藏状态节点都接收来自上一个节点的输入，因此这可以用一个循环来表示，其结构如图\ref{fig:rnn}所示，隐藏状态层保留了过去序列编码的摘要，每当RNN呈现新的输入时，就会更新该隐藏层的状态。对于一个最简单的标准循环神经网络其通过以下形式来更新隐藏单元的状态$h$：
+\begin{equation}
+  \label{eq:rnn}
+  h_{n} = f \left(Ux_{n} + Wh_{n-1} + b \right)
+\end{equation}
+其中$h_{n-1}$是第$n-1$层神经网络的向量化表示，$x_{n}$是传递给第$n$层的输入序列编码，$U,W$是该层包含的权重矩阵，$b$是该层向量的偏置。函数$f(\cdot)$为非线性转换函数，也称激活函数，常用的激活函数有Logistic Sigmoid函数$\sigma(\cdot )$，$tanh(\cdot)$，线性整流单元$ReLU(\cdot)$和一些它们的变体。经过以上隐藏层状态的更新之后，输出层的计算公式如下：
+\begin{equation}
+  \label{eq:rnn1}
+  \hat{y}_{n} = g(Vh_{n})
+\end{equation}
+其中$\hat{y}_{n}$是$n$时刻的输出值，$V$是输出层的权重矩阵，$g(\cdot)$是输出层的激活函数。
 
+\begin{figure}[htb]%更改
+  \centering
+  \includegraphics[width=12cm]{rnn.png}\\
+  \caption{简单循环神经网络结构图}
+  \label{fig:rnn}
+\end{figure}
 
+通过公式\ref{eq:rnn},\ref{eq:rnn1}可以明白，RNN的每一个时间步骤都会有一个新的输入，并且特定时间步骤的输出依赖于之前所有步骤的输入，这意味着时间步骤$N$时刻的损失函数的计算要回溯到时间步骤$1$，这一过程也称为\textit{基于时间的反向传播算法(backpropagation through time, BPTT)}\upcite{Sutskever:2013:TRN:2604780}。但是如果要处理的序列很长的话，经过多层的反向传播，BPTT会产生梯度消息或者梯度爆炸的问题，以至于无法从差的很远的时间步骤中感知上下文环境，使得RNN的训练变得非常麻烦，RNN这一明显的缺点也称为长期依赖问题。
+
+\textbf{长短期记忆神经网络}
+
+为了解决RNN的长期依赖问题，一些基于公式\ref{eq:rnn}的变形工作诞生，其中最广为人知的是长短期记忆网络(long short-term memory, LSTM)\upcite{LSTM1997}。LSTM通过精巧设计的记忆单元更换了RNN中的隐藏单元，其核心计算单元如图\ref{fig:lstm}所示。在遗忘门\eqref{forget_gate}当中，前一时间步的掩藏状态和当前时间步的输入经过Sigmoid函数非线性转换之后得到一个$[0,1]$之间的值，以表示需要遗忘信息的概率。在输入门\eqref{input_gate},\eqref{input_gate1}中，将当前时间步骤中的输入和前一时间步骤学习到的隐藏状态经过tanh激活函数的计算生成一些候选值，并通过Sigmoid函数的传递从候选值中选出一些进行更新。而输出门\eqref{output_gate}就决定了当前单元要输出哪些部分。LSTM通过如下的组合函数来更新隐藏单元的状态：
+  \begin{align} 
+  f_{t} &=\sigma(U_{f} x_{t}+W_{f}[h_{t-1}+ c_{t-1}] +b_{f}) \label{forget_gate}\\
+  i_{t} &=\sigma(U_{i} x_{t}+W_{i}[h_{t-1}+ c_{t-1}]+b_{i}) \label{input_gate}\\  
+  c_{t} &=f_{t} c_{t-1}+i_{t} \tanh (U_{c} x_{t}+W_{c} h_{t-1}+b_{c}) \label{input_gate1}\\ 
+  o_{t} &=\sigma(U_{o} x_{t}+W_{o}[h_{t-1}+ c_{t}]+b_{o}) \label{output_gate}\\ 
+  h_{t} &=o_{t} \tanh (c_{t}) 
+  \end{align}
+% \end{equation}
+
+其中$\sigma(\cdot)$是Logistic Sigmoid激活函数，而$i$、$f$、$o$和$c$分别是输入门、遗忘门、输出门和隐藏层的激活向量。
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12cm]{lstm.png}\\
+  \caption{长短期记忆网络神经元结构图}
+  \label{fig:lstm}
+\end{figure}
 
 \textbf{门控循环单元Gated Recurrent Unit}
 
-\textbf{长短期记忆神经网络}
+由于LSTM在神经单元中增加了三个门结构，与RNN相比，在一个神经元当中要求完成更多的复杂计算。当时用更大的网络的时候，训练时间相比RNN也将显著增加。为了减少训练的时间复杂度并同时保留LSTM对长期依赖关系的记忆能力，门控循环单元(Gated Recurrent Unit, GRU)被提出。与LSTM不同，GRU没有单元状态并将三个门减少为两个。
 
 \textbf{双向循环神经网络}
 
