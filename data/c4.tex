@@ -1,56 +1,208 @@
-﻿\chapter{基于聚类的关键词抽取}
-关键词抽取任务通常包括三个基本步骤，实验的方法多种多样，可基于句子抽取，也可以基于内容理解的抽取，又或者是基于%
-结构的抽取方法等等，无论什么方法被采用，基本上都会面临三个重要的问题，其一是文档冗余信息的识别及处理；%
-其二是对核心关键词的定位识别；其三则是生成的词或短语的可读性和连贯性。宗成庆老%
-师\upcite{宗成庆2013统计自然语言处理}对识别冗余信息的方法总结为两种%
-.
-\section{数据预处理}
-对每个数据集，本文都使用以下的数据预处理步骤：%
-首先对文本进行句子切割、分词和词性标注。对候选短语的打分采用如下策略，如公式~(\ref{equ:chap04:phrase})
+﻿%!TEX root = ../document.tex
+\chapter{基于自注意力机制的序列感知推荐}
+
+\section{问题的提出}
+在多个不同的机器学习领域，例如图像描述、机器翻译、阅读理解、摘要生成还有一些其他的应用上，已经证明注意力机制是有明显效果的%
+这一机制背后的重要思想是影响序列输出的因素只与序列中某些重要信息相关，而无需过多关注其他无用的信息。这一机制的命名受到人类视觉系统中视觉焦点的启示，所以称为注意力机制。
+
+2017年NIPS大会上谷歌发表了一个完全用注意力机制构建的机器翻译框架\textit{Transfomer}\upcite{NIPS2017_7181}，到达了当时最好的效果。
+
+
+在基于循环神经网络的序列感知推荐系统方面，由于循环神经网络本身的特性也带来了性能上面的一些缺陷。由于循环神经网络的结构，当前神经元的输入有上一个神经元的输出，反向传播梯度更新时，下一个神经元的梯度更新也需要上一个神经元计算完再开始，这一串行的性质限制了循环神经网络的训练速度，特别是当需要使用更深的循环神经网络的时候。而由于注意力机制完全抛弃了循环神经网络的串行结构而
+
+使用注意力机制的另一好处是基于注意力的方法在推荐可解释性方面也更好说明。%
+
+因此在这一部分，我们选用自注意力机制来建模用户短期行为模式的依赖因素，
+
+\subsection{目标问题定义}
+
+与第三章中基于双向长短期记忆网络的序列感知推荐模型问题一样，我们定义$\mathbb{U}= \left \{ u_{1},u_{2},...,u_{N} \right \}\label{eq}$%
+代表不同的用户集合，定义$\mathbb{I}= \left \{ i_{1},i_{2},...,i_{M} \right \}$代表在所有序列%
+中出现过的不同物品集合，$s_{u}^{t}\in \mathbb{I}$表示用户$u$在时间刻$t$点击某一个物品的记录，%
+该记录对应的物品包含在物品集合$\mathbb{I}$当中。对于每一个用户$u$，%
+都记录一个按照数据诞生时间戳顺序排列的用户点击记录%
+序列$\mathbb{S}_{u}=\left \{ s_{u}^{1},s_{u}^{2},...,s_{u}^{t-1},s_{u}^{t} \right \}$%
+序列感知推荐的目标是预测下一次点击行为，也就是做出$t+1$时刻的推荐$s_{u}^{t+1}$。在序列感知推荐%
+模型当中，对于序列$s$，模型的输出是所有候选物品对象可能被点击的概率$\hat{y}$，而概率最大的$K$个%
+输出所对应的候选物品将作为推荐项目给到用户。%
+
+\subsection{嵌入层}
+
+我们使用用户消费历史的最近几个序列当做特征，用户消费的最后一个物品当做标签，来构建一个超多分类%
+的有监督学习模型。因此，在特征工程阶段，我们需要将原始序列特征数据转换为计算机容易处理的向量形式%
+并且与标签映射。One\_hot编码是用来表达离散特征的最常用的向量表达形式，然而One\_hot编码的向量会遇%
+到高维和稀疏的问题。如果我们使用One\_hot编码来处理具有1000个类别的特征，那么每个特征会被一个拥%
+有1000个数字的向量来表示，但其中999个数字会是0.在一个大规模数据集中，就计算效率而言这种方式是%
+不可取的。而词嵌入技术在自然语言处理领域大放异彩，我们可以借用词嵌入技术，也构造一个嵌入矩阵来%
+得到比One\_hot形式小得多的向量结构：
+$$
+e(I_i) = EI_i
+$$
+其中$E\in \mathbb{R}^{|e|\times |M|}$, $|e|$是嵌入层的大小，$|M|$是训练集中不同项目的数量。%
+所以$e(I_i)$是$I_i$的嵌入表达，其是一个具有$e$个实数的稠密矩阵。与一个 $|M|\times |M|$大小的%
+One\_hot编码形式相比，我们的序列嵌入矩阵的大小为$|e|\times |M|$，当处理大数据集时，这显著减小%
+了内存消耗。
+
+\textbf{位置信息嵌入层}
+
+由于在利用自注意力方法构建的模型当中，没有了循环和卷积结构，因此抛弃了项目之间的序列信息，但%
+用户的短期兴趣关注点隐藏在序列之中，为了使我们的模型能够捕捉到序列变化信息，必须将序列中物品%
+的相对或者绝对位置信息加入到模型当中去。位置编码有可学习形式(learned)和固定参数形式%
+(fixed)\upcite{DBLP:journals/corr/GehringAGYD17}。这里我们使用了与%
+Transfer\upcite{NIPS2017_7181}一样的方式，在模型输入的嵌入层中加入物品序列的固定参数形式“位置编码”，%
+即位置信息嵌入层。我们使用正弦和余弦函数并结合不同频率将物品的固定位置编码传递给模型，位置编码%
+的一个维度对应于正弦曲线上的一个值，从而形成从$2\pi $到$10000 \cdot  2\pi$的几何级数波长，%
+这些信号作为额外的信息加入到输入（或输出）中以表达时间的流逝，使模型能够%
+感知到当前正在处理的是输入（或输出）序列的哪个部分。：
+
+\begin{align}
+  PE(t,2e) &= \sin (t/10000^{2e/d_{model}}) \label{eq:sin}\\
+  PE(t,2e+1) &= \cos (t/10000^{2e/d_{model}}) \label{con}
+\end{align}
+
+\begin{figure}
+\centering
+\includegraphics[height=4cm,width=14cm]{pe.eps}
+\caption{使用不同维度大小的位置编码波形图}
+\label{pe}
+\end{figure}
+
+其中$t$就是位置信息，表示该物品出现在序列中的第$t$个时间步骤，$e$是位置嵌入层的维度。图\ref{fig:pe}显示，不同的位置嵌入层维度大小，位置编码波形图具有不同的波长。由于位置信息嵌入层与嵌入层有相同的维度$|e|$，因此可以把两者相加起来构成我们最终的输入嵌入层$\widehat{\mathbf{E}}$：
 \begin{equation}
-\label{equ:chap04:phrase}
-PhraseScore(p_i) = \sum\limits_{{w_j}\in {p_i}} WordScore(w_j)
+	\label{equ:chap04:embedding}
+	\widehat{\mathbf{E}}=\left[ \begin{array}{c}{\mathbf{E}_{s_{1}}+\mathbf{PE}_{1}} \\ 
+	{\mathbf{E}_{s_{2}}+\mathbf{PE}_{2}} \\ 
+	\cdots \\
+	{\mathbf{E}_{s_{n}}+\mathbf{PE}_{n}}\end{array}\right]
 \end{equation}
 
-\section{对比算法}
 
-\textbf{TFIDF}(term frequency-inverse %
-document frequency)是基于统计的算法，对论文的摘要进行关键词抽取，%
-TF是指该词在文本中出现的频率，%
-可以用来描述文档内容；IDF是该词的逆文档频率，%
-是用来衡量该词区分分档的能力。TFIDF的为两个公式的乘积，如~(\ref{equ:chap04:tfidf})所示。
+\section{自注意力模块}
 
-\begin{equation}
-\label{equ:chap04:tfidf}
-TFIDF = {\frac{n_i}{N_j}*\log\frac{|D|}{|D_i| + 1}}
-\end{equation}
+自注意力方法是一种特殊的注意力机制，已有在各种任务上的成功应用。与最简单的注意力方法通过对%
+整个语境学习得到有限的知识表示不同，自注意力方法即使面对相隔距离较远的两个元素，其依然能%
+保存上下文中的序列信息并且捕获这两个元素在序列上的关系。因此我们这里使用自注意力方法来捕获%
+用户历史行为中的序列特征。
 
-其中N表示文档j中包含的词的总量，n表示词i出现在文档j中的词频。%
-$|D|$表示语料库中总的文档数量，$|D_i|$表示语料库中包%
-含词i的文档数量。%
+构建自注意力模块的基本单元由\textit{缩放点乘注意力Scaled Dot-product Attention}构成，%
+一个自注意力模块的输入由\textit{查询(query)}，\textit{键(key)}和\textit{值(value)}%
+三部分组成。自注意力模块的输出是模块中\textit{值(value)}的加权和得来，而这里的权重矩阵则有%
+\textit{查询(query)}和其对应的\textit{键(key)}决定。
 
-\textbf{TextRank}基于词共现的特征-TextRank
+我们用$Q$表示\textit{查询(query)}向量，用$K$表示\textit{键(key)}向量，用$V$表示%
+\textit{值(value)}向量，向量中的每一行代表一个物品。首先，我们通过使用共享参数的非线性%
+变换将\textit{查询}和\textit{键}投影到同一空间：
+\begin{align} 
+	Q^{\prime} &=\operatorname{ReLU}(W_{Q}\widehat{\mathbf{E}}) \\ 
+	K^{\prime} &=\operatorname{ReLU}(W_{K}\widehat{\mathbf{E}})
+\end{align}
 
-\textbf{PositionRank}基于位置的特征-Position PageRank
+其中$W_{Q}$，$W_{K}$分别是\textit{查询}和\textit{键}向量的权重矩阵，%
+得到$Q^{\prime}$和$K^{\prime}$之后我们就可以通过如下形式得到\textit{值(value)}%
+的权重矩阵：
+\begin{align} 
+	V^{\prime}=\operatorname{softmax}(\frac{Q^{\prime} {K^{\prime}}^{T}}{\sqrt{d}})
+\end{align}
+其中$\sqrt{d}$为缩放因子，为了避免点乘之后出现过大的值导致softmax的输出被推到梯度消失的%
+位置，因此加上缩放因子来优化矩阵点乘。于是Self-Attention模块的输出就可以计算出来了：
+\begin{align} 
+	\mathbf{S}=\mathrm{SA}(\widehat{\mathbf{E}})=\text { Attention }(W_{Q}\widehat{\mathbf{E}}, W_{K}\widehat{\mathbf{E}}, W_{V}\widehat{\mathbf{E}}) = V^{\prime}\widehat{\mathbf{E}}
+\end{align}
 
-\textbf{TopicRank}本文是基于TopicRank的一个改进算法，%
-首先通过将候选集中的短语通过聚类划分为主题，即主题便是由%
-候选集中的短语的子集表示，
-再将聚类后得到的主题作为构建完全图的节点，该图的边则是通过计算不同主题之间词与词%
-之间的语义关系得到图的权重，%
-最后采用基于随机游走的PageRank算法为每个主题的排序，最后从每个主题中选出一个候选词%
-作为关键词。该特征的获取需要进行的计算包括主题聚类、构建图和PageRank给节点打分，%
-因此，相比较前面几种算法而言，该算法的速度相对缓慢。接下来将着重介绍TopicRank%
-识别和定义主题的原理及本文对其进行改进的点。%
 
-\section{关键词抽取聚合排序算法}
+\textbf{多头注意力机制Multi-Head Attention}
+
+与其只让单个Self-Attention模块来学习$d$维的\textit{查询(query)}，\textit{键(key)}和\textit{值(value)}，可以通过集成学习的方法，让多个Self-Attention模块分别学习不同位置子空间的表达，由于随机初始化的不同，每个Self-Attention模块的关注点将会有所差异，所以每个Self-Attention模块可以分别学习到三个不同的$d_{k}$维的\textit{查询(query)}、$d_{k}$维的\textit{键(key)}和$d_{v}$维的\textit{值(value)}向量。每个Self-Attention模块有了\textit{查询(query)}、\textit{键(key)}和\textit{值(value)}之后，就能得到$d_{v}$维的输出。而Multi-Head Attention是多个Scaled Dot-product Attention的并行叠加，因此Multi-Head Attention的计算复杂度与Scaled Dot-product Attention相当，但是却获得了更好的泛化性能。因此这部分Multi-Head Attention的计算方式如下：
+\begin{align} 
+	\text { MultiHead }(\widehat{\mathbf{E}}) =\text { Concat }[\mathrm{SA}_{1}(\widehat{\mathbf{E}}), \ldots, \mathrm{SA}_{h}(\widehat{\mathbf{E}})] W^{O}
+\end{align}
+其中$h$表示我们将$h$个Self-Attention模块并联堆叠在一起得到Multi-Head Attention模块。
+
+\begin{figure}[!htb]
+   \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[height=6cm]{Scaled_Dot-Product_Attention.png} % ,width=\linewidth
+     \caption{Scaled\_Dot-Product\_Attention缩放点乘注意力结构图}
+     \label{Fig:Scaled_Dot-Product_Attention}
+   \end{minipage}\hfill
+   \begin {minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[height=6cm]{Multi-Head_Attention.png} % ,width=\linewidth
+     \caption{Multi-Head\_Attention多头注意力模块结构图}
+     \label{Fig:Multi-Head_Attention}
+   \end{minipage}
+   % \caption{BiLSTM4Rec training}
+   % \label{fig:coffee}
+\end{figure}
+
+\textbf{结构中逐项的feed-forward网络作用}
+
+考虑到Self-Attention模块在学习物品嵌入向量的过程中仍然是一个广义线性模型，为了增强整个Transformer模型的非线性拟合能力，Multi-Head Attention子层后面跟了一个前馈神经网络FFN层，为了保证模型计算的效率，它仅由两个线性变换组成，中间嵌入一个Relu激活函数来提升非线性表达能力，因此这一部分的形式如下：
+\begin{align}
+	\mathbf{F}_{i}=\mathrm{FFN}\left(\mathbf{S}_{i}\right)=\operatorname{ReLU}\left(\mathbf{S}_{i} \mathbf{W}^{(1)}+\mathbf{b}^{(1)}\right) \mathbf{W}^{(2)}+\mathbf{b}^{(2)}
+\end{align}
+其中$\mathbf{S}_{i}$表示嵌入层经过第$i$个Self-Attention模块计算后的输出
+
+\textbf{Residual Connections残差连接}
+
+在序列建模的问题当中，用户最后一个点击浏览的物品通常会与下一个物品的联系较大，所以最后一个物品的特征权重应该会更大。由于Self-Attention模块在处理最后一个物品的嵌入向量的时候会将其与之前所有的其他物品嵌入向量做交互，因此最后一个物品的特征并没有特别关注。为了提升对这种浅层特征的提取能力，可以为模型增加残差连接操作，其主要思想是如果浅层特征对于目标学习有效的话，就直接将低层网络学习的浅层特征直接传递给输出层，而不用再经过深层网络提取复杂特征，残差连接的做法就是将浅层网络的输出建立旁路与输出层相连，跳过了部分中间复杂计算。
+
+\begin{figure}
+\centering
+\includegraphics[height=6cm]{residual.pdf}
+\caption{残差连接结构图}
+\label{residual}
+\end{figure}
+
+\textbf{层次归一化Layer normalization}
+
+为了使得模型训练的时候更加容易收敛，减少训练时间，在深度神经网络的模型中加入归一化操作是一个比较常见的做法。在训练卷积神经网络时候，常见的操作是加入批量归一化(Batch Normalization)\upcite{Ioffe:2015:BNA:3045118.3045167}，批量归一化通过计算均值和方差将一个批量的输入数据装换到$[0,1]$之间，加速梯度下降，但其高度依赖批量的大小，同时也不适用于输入序列长度不固定的循环神经网络等模型。层次归一化(Layer Normalization)\upcite{ba2016layer}则不是在样本层面，而是将该层神经元的输入通过计算均值和方差转换到在$[0,1]$之间，这样的操作是跨特征计算的，与其他样本无关，因此可以使用任意大小的批量大小。
+\begin{align}
+	LN(x_i)=\alpha\times\frac{x_i-u_B}{\sqrt{\sigma_B^2+\epsilon}}+\beta
+\end{align}
+
+\textbf{Dropout}
+
+使用神经网络时，随着模型变得更大和更深，也带了过拟合的潜在风险，对于神经网络来说，除了在损失函数处加上L1和L2正则项之外，在模型的结构当中加入Dropout也是防止过拟合的常见操作之一，为了防止我们的模型过拟合、同时为了让训练更稳定，减少部分模型参数加速训练过程，在Self-Attention模块的输出之后加上Dropout操作：
+
+\begin{align}
+	\hat{y}=x+\text { Dropout }(\text {SA}(\text { LN }(x)))
+\end{align}
+
+\textbf{Network Training}
+
+\section{复杂度分析}
 
 
 \subsection{算法描述}
+
+
 \subsection{算法实现}
-Borda Count
-Schulze方法
-Weighted Majority Voting
+\begin{algorithm}[htbp]
+	\caption{基于自注意力机制的序列感知推荐算法}
+	\label{alg:self-attention}
+		\begin{algorithmic}[1]
+			\REQUIRE 长文本数据：$T$；最大语句数量：$maxNum$； 最大字数：$maxLen$
+			\ENSURE 短文本数据：$Tokens$
+			\STATE $sentences \leftarrow T$, 其中$sentences=\{sen_{1}, sen_{2}...sen_{n}\}$
+			\IF {$n > maxNum$}
+			  \FOR {$i=0$ to $n$}
+			    \STATE 计算文本中每个语句的权重：$score_{sen_{i}}$
+			  \ENDFOR
+			  \STATE 根据$score$对语句有大到小排序
+			  \STATE 选取TOP N语句：$sentences_{topn} \subseteqq sentences$
+			  \STATE $words \leftarrow sentences_{topn}$，其中 $words=\{word_{1}, word_{2}...word_{m}\}$
+			\ELSE
+			  \STATE $words \leftarrow sentence$，其中 $words=\{word_{1}, word_{2}...word_{m}\}$
+			\ENDIF
+			\IF {$m > maxLen$}
+			  \STATE $Tokens \subseteqq words$
+			\ELSE
+			  \STATE $Tokens = words $
+			\ENDIF
+			\RETURN $Tokens$
+		\end{algorithmic}
+\end{algorithm}
 
 
 \section{本章小结}

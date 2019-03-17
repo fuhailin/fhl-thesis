@@ -116,7 +116,7 @@
 
 \textbf{长短期记忆神经网络}
 
-为了解决RNN的长期依赖问题，一些基于公式\ref{eq:rnn}的变形工作诞生，其中最广为人知的是长短期记忆网络(long short-term memory, LSTM)\upcite{LSTM1997}。LSTM通过精巧设计的记忆单元更换了RNN中的隐藏单元，其核心计算单元如图\ref{fig:lstm}所示。在遗忘门\eqref{forget_gate}当中，前一时间步的掩藏状态和当前时间步的输入经过Sigmoid函数非线性转换之后得到一个$[0,1]$之间的值，以表示需要遗忘信息的概率。在输入门\eqref{input_gate},\eqref{input_gate1}中，将当前时间步骤中的输入和前一时间步骤学习到的隐藏状态经过tanh激活函数的计算生成一些候选值，并通过Sigmoid函数的传递从候选值中选出一些进行更新。而输出门\eqref{output_gate}就决定了当前单元要输出哪些部分。LSTM通过如下的组合函数来更新隐藏单元的状态：
+为了解决RNN的长期依赖问题，一些基于公式\ref{eq:rnn}的变形工作诞生，其中最广为人知的是长短期记忆网络(long short-term memory, LSTM)\upcite{LSTM1997}。LSTM通过精巧设计的记忆单元更换了RNN中的隐藏单元，其核心计算单元如图\ref{fig:lstm}所示。LSTM神经元内部通过精心设计的分别称为遗忘门、输⼊门、输出门的三个门结构来决定哪些信息更新到内部或者从内部去除。在遗忘门\eqref{forget_gate}当中，前一时间步的掩藏状态和当前时间步的输入经过Sigmoid函数非线性转换之后得到一个$[0,1]$之间的值，以表示需要遗忘信息的概率。在输入门\eqref{input_gate},\eqref{input_gate1}中，将当前时间步骤中的输入和前一时间步骤学习到的隐藏状态经过tanh激活函数的计算生成一些候选值，并通过Sigmoid函数的传递从候选值中选出一些进行更新。而输出门\eqref{output_gate}就决定了当前单元要输出哪些部分。LSTM通过如下的组合函数来更新隐藏单元的状态：
   \begin{align} 
   f_{t} &=\sigma(U_{f} x_{t}+W_{f}[h_{t-1}+ c_{t-1}] +b_{f}) \label{forget_gate}\\
   i_{t} &=\sigma(U_{i} x_{t}+W_{i}[h_{t-1}+ c_{t-1}]+b_{i}) \label{input_gate}\\  
@@ -137,12 +137,47 @@
 
 \textbf{门控循环单元Gated Recurrent Unit}
 
-由于LSTM在神经单元中增加了三个门结构，与RNN相比，在一个神经元当中要求完成更多的复杂计算。当时用更大的网络的时候，训练时间相比RNN也将显著增加。为了减少训练的时间复杂度并同时保留LSTM对长期依赖关系的记忆能力，门控循环单元(Gated Recurrent Unit, GRU)被提出。与LSTM不同，GRU没有单元状态并将三个门减少为两个。
+由于LSTM在循环神经单元中增加了三个门结构，与RNN相比，在一个神经元当中要完成更多的复杂计算。当使用更大的网络的时候，训练时间相比RNN也将显著增加。为了减少训练的时间复杂度并同时保留LSTM对长期依赖关系的记忆能力，2014年Cho等人提出门控循环单元(Gated Recurrent Unit, GRU)\upcite{GRU2014}。与LSTM相似，GRU使用门结构建模单元内部信息的流动，不同的是，GRU将LSTM三个门减少为两个。GRU使用更新门来决定是否遗忘上时刻的信息或者记忆此时刻新的外部输入信息，其功能相当于组合了LSTM 中的输入门与遗忘门。使用重置门来决定如何将新的输入信息与内部已有放入记忆相结合。在$t$时刻GRU单元中更新门的状态表达式为:
+$$
+z_{t}^{j}=\sigma\left(U_{z} \mathbf{x}_{t}+W_{z} \mathbf{h}_{t-1}\right)^{j}
+$$
+其中，$\mathbf{x}_{t}$为第$t$个时间步骤的输入向量，$\mathbf{h}_{t-1}$中保存的是上一个时间步骤的信息。$U$，$W$是更新门当中输入向量与上一时间步信息的权重矩阵。$t$时刻GRU单元中重置门为：
+$$
+r_{t}^{j}=\sigma\left(U_{r} \mathbf{x}_{t}+W_{r} \mathbf{h}_{t-1}\right)^{j}
+$$
+结合更新门与重置门，整个GRU神经元在$t$时间步的内部状态更新为：
+$$
+z_{t}^{j}=\sigma\left(U_{z} \mathbf{x}_{t}+U_{z} \mathbf{h}_{t-1}\right)^{j}
+$$
+其中$\tilde{h}_{t}^{j}$为候选信息，表示当前记忆的内容，其计算表达式为：
+$$
+h_{t}^{j}=\left(1-z_{t}^{j}\right) h_{t-1}^{j}+z_{t}^{j} \tilde{h}_{t}^{j}
+$$
+单个GRU神经元的总体结构如图\ref{fig:gru}所示。
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12cm]{gru.png}\\
+  \caption{门控循环单元神经元结构图}
+  \label{fig:gru}
+\end{figure}
 
 \textbf{双向循环神经网络}
 
+在自然语言处理的实体识别技术中，双向循环神经网络(Bidirectional recurrent neural networks, BRNN)\upcite{Schuster1997BidirectionalRN}弥补了单项循环神经网络对于上下文感知能力的不足，因为单向RNN预测下一个单词时使用的只是此单次出现之前的信息，而BRNN则从两个方向获取信息，上下文感知能力也就更强了。BRNN将隐藏层分为两个部分，前向状态层$\stackrel{\rightarrow}{h}$和反向状态层$\stackrel{\leftarrow}{h}$，其输出层的输入由$\stackrel{\rightarrow}{h}$和$\stackrel{\leftarrow}{h}$堆叠而成，其迭代公式如下：
+\begin{align} 
+  \vec{h}_{t} &= \sigma(U_{\vec{h}} x_{t}+W_{\vec{h} \vec{h}} \vec{h}_{t-1}+b_{\vec{h}}) \label{forword}\\
+\stackrel{\leftarrow}{h}_{t} &= \sigma(U_{\stackrel{\leftarrow}{h}} x_{t}+W_{\stackrel{\leftarrow}{h} \stackrel{\leftarrow}{h}} \stackrel{\leftarrow}{h}_{t+1}+b_{\stackrel{\leftarrow}{h}}) \label{backword}\\
+y_{t} &= W_{\vec{h} y} \vec{h}_{t}+W_{\stackrel{\leftarrow}{h}y} \stackrel{\leftarrow}{h}_{t}+b_{y} \label{stack}
+  \end{align}
 
-
+BRNN的隐藏层结构如图\ref{fig:brnn}所示。
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12cm]{brnn.png}\\
+  \caption{双向循环网络神经结构图}
+  \label{fig:brnn}
+\end{figure}
 
 
 
@@ -150,7 +185,7 @@
 
 
 
-\section{迁移学习}
+\section{图神经网络}
 学术社交网络能为具有共同兴趣的科研工作者提供%
 一个实时沟通、共享成果的平台。目前，学术社%
 交网络的发展很迅速，其覆盖的面也非常广泛，%
