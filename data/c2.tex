@@ -126,7 +126,7 @@
   \end{align}
 % \end{equation}
 
-其中$\sigma(\cdot)$是Logistic Sigmoid激活函数，而$i$、$f$、$o$和$c$分别是输入门、遗忘门、输出门和隐藏层的激活向量。
+其中$\sigma(\cdot)$是Logistic Sigmoid激活函数；而$i$、$f$、$o$和$c$分别是输入门、遗忘门、输出门和隐藏层的激活向量；变量$b$表示偏置向量，例如$b_{f}$表示为遗忘门的偏置向量。$U$、$W$分别代表输入向量的权重和上一层输出的权重，例如在遗忘门中，$U_{f}$代表遗忘门输入向量$x_{t}$的权重，$W_{f}$代表上一个LSTM神经元输出$h_{t-1}$的权重。
 
 \begin{figure}[htb]
   \centering

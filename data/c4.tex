@@ -171,7 +171,11 @@ Transfer\upcite{NIPS2017_7181}一样的方式，在模型输入的嵌入层中�
 
 \textbf{Network Training}
 
+
+
 \section{复杂度分析}
+
+模型的时间复杂度只要由Self-Attention模块主导，Self-Attention的时间复杂度为$O(n^{2} d)$，其中$n$为序列的长度，$d$为嵌入层维度，而Multi-Head Attention由多个Self-Attention并行叠加，假设有$h$个Self-Attention，则Multi-Head Attention的时间复杂度仍为$O(n^{2} d)$，
 
 
 \subsection{算法描述}
@@ -182,15 +186,15 @@ Transfer\upcite{NIPS2017_7181}一样的方式，在模型输入的嵌入层中�
 	\caption{基于自注意力机制的序列感知推荐算法}
 	\label{alg:self-attention}
 		\begin{algorithmic}[1]
-			\REQUIRE 长文本数据：$T$；最大语句数量：$maxNum$； 最大字数：$maxLen$
-			\ENSURE 短文本数据：$Tokens$
-			\STATE $sentences \leftarrow T$, 其中$sentences=\{sen_{1}, sen_{2}...sen_{n}\}$
+			\REQUIRE 用户序列数据：$S$；最大序列长度：$maxLen$； 最大字数：$maxNum$
+			\ENSURE 推荐结果：$Items$
+			\STATE $sequences \leftarrow S$, 其中$sequences=\{sen_{1}, sen_{2}...sen_{n}\}$
 			\IF {$n > maxNum$}
 			  \FOR {$i=0$ to $n$}
 			    \STATE 计算文本中每个语句的权重：$score_{sen_{i}}$
 			  \ENDFOR
 			  \STATE 根据$score$对语句有大到小排序
-			  \STATE 选取TOP N语句：$sentences_{topn} \subseteqq sentences$
+			  \STATE 选取TOP N语句：$sentences_{topn} \subseteqq sequences$
 			  \STATE $words \leftarrow sentences_{topn}$，其中 $words=\{word_{1}, word_{2}...word_{m}\}$
 			\ELSE
 			  \STATE $words \leftarrow sentence$，其中 $words=\{word_{1}, word_{2}...word_{m}\}$

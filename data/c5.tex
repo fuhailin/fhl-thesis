@@ -1,53 +1,47 @@
 ﻿\chapter{实验结果与分析}
+
 \section{数据集介绍}
-本文设计了两组实验，一组是关键词抽取，另外%
-一组是学者推荐。因此，需要对两组实验的实%
-验结果分别进行验证。关键词抽取部分，本文选%
-用KDD、WWW以及Hulth2003三个数据集上进行实验，%
-在关键词抽取部分的实验评估中，都将作者给定的%
-元关键词作为正确的标准，以上数据的详细内容可查看表\ref{tab:dataset}。为了验证本文提出的学%
-者推荐模型的可用性，本文通过搜索关键词从微软%
-学术官网上爬取学术论文数据集进行实验
-\footnote{\url{https://academic.microsoft.com}}。%
 
-\subsection{KDD和WWW}
-数据集KDD和WWW分别是从知识发现与数据挖%
-掘(Knowledge Discovery and Data Mining)顶级会议和万维网%
-(World Wide Web Conference)上搜集的真实科技论文数据，这两个数%
-据都包括论文的题目、摘要、作者给定的关键词三个字段。
-\subsection{Hulth2003}
-数据集Hulth2003来自于Inspec数据库，Hulth在2003年时搜集的从1998年%
-到2002年期间的期刊论文，该数据集中包含摘要和关键词，每篇摘要都被人工分配了%
-两个关键词，其中一个集合中的关键词是Inspec数据库的词库中能已经包含的词，%
-但另外一个集合是专家认为跟这篇论文比较匹配的关键词就能被确定为关键词，%
-而不会受到Inspec词库的限制，本文的实验选用后一种关键词集进行实验。
+为了比较上文提出的两个算法模型，分别从推荐结果的准确性、和算法训练与结果查询返回效率两个方面分别进行了两组实验。%
+因此需要设计两组实验分别从算法推荐准确性和性能两个方面进行验证。本文评估上述两个算法在两个来自真实%
+应用上的数据集，这些数据集都包涵用户与物品产生交互的时间戳：
+\textbf{MovieLens}：MovieLens\footnote{\url{https://grouplens.org/datasets/movielens/}}是%
+用来对推荐模型进行评估的最流行的基准数据集，它是由GroupLens研究组织从MovieLens网站收集的关于用户%
+对电影评分的数据集，其中主要的评分文件以“用户ID | 电影ID | 评分 | 时间戳”为一行的格式%
+保存了某个用户在某时刻对某个电影做出的评分标准，按照数据量的大小不同，本文选用的MovieLens数据集有%
+Movielens 100K和Movielens 1M。
 
-\begin{table}[htbp]
-\centering
-\caption{数据集}
-\label{tab:dataset}
-\begin{minipage}[t]{0.9\linewidth}
-\begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c
-@{\extracolsep{\fill}} c @{\extracolsep{\fill}} c }
-\toprule[1.5pt]
-{\hei 数据集} & {\hei 类型} & {\hei 语言}
- & {\hei 数量}\\
-\midrule[1pt]
-WWW & 论文摘要 & 英文 &  1330\\
-KDD & 论文摘要 & 英文 &  755\\
-Hulth03 & 论文摘要 & 英文 & 500\\
-\bottomrule[1.5pt]
-\end{tabular*}
-\label{tab3}
-\end{minipage}
-\end{table}
-\subsection{微软学术论文数据}
-本文通过搜索“hfmd”(手足口病)、“t2dm”(二型糖尿病)、“pneumonia”(肺炎)%
-和“cancer”(癌症)四个关键词从微软学术网站上爬取了2015年到2017年的生物医%
-学文献数据。其中包括论文标题、摘要、作者三个属性。
+\textbf{Yoochoose}：Yoochoose\footnote{\url{http://2015.recsyschallenge.com}}数据集是%
+2015年推荐系统顶级会议RecSys举办的挑战赛RecSys Challenge 2015上公开使用的目标数据集。%
+Yoochoose包含了一个在线电子商务网站在6个月时间内用户所有的点击会话流。%
+
+
+% \begin{table}[htbp]
+% \centering
+% \caption{数据集}
+% \label{tab:dataset}
+% \begin{minipage}[t]{0.9\linewidth}
+% \begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c
+% @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c }
+% \toprule[1.5pt]
+% {\hei 数据集} & {\hei 类型} & {\hei 语言}
+%  & {\hei 数量}\\
+% \midrule[1pt]
+% WWW & 论文摘要 & 英文 &  1330\\
+% KDD & 论文摘要 & 英文 &  755\\
+% Hulth03 & 论文摘要 & 英文 & 500\\
+% \bottomrule[1.5pt]
+% \end{tabular*}
+% \label{tab3}
+% \end{minipage}
+% \end{table}
+
 
 \section{评价指标}
-\subsection{关键词抽取评价指标}
+作为一个推荐模型，模型会对查询目标给出点击可能性最高的N个物品，对于本文提出的序列推荐形式，%
+模型的输入是$t$时刻及其以前的用户点击物品序列，需要的模型输出目标是$t+1$时刻用户可能点击%
+的物品，以$\hat{I}_{u}^{t+1}$表示，
+
 在关键词抽取工作中，提出过很多评价方法，其中最为常用的是准确%
 率(Precision)、召回率(Recall)、准确率和召回率的调和平均数F1值(F1-score和MRR，%
 本文也选用这三种评价指标验证关键词抽取算法的有效性。
