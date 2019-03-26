@@ -69,7 +69,8 @@ Transfer\upcite{NIPS2017_7181}一样的方式，在模型输入的嵌入层中�
 
 其中$t$就是位置信息，表示该物品出现在序列中的第$t$个时间步骤，$e$是位置嵌入层的维度。图\ref{fig:pe}显示，不同的位置嵌入层维度大小，位置编码波形图具有不同的波长。由于位置信息嵌入层与嵌入层有相同的维度$|e|$，因此可以把两者相加起来构成我们最终的输入嵌入层$\widehat{\mathbf{E}}$：
 \begin{equation}
-	\label{equ:chap04:embedding}
+	% \label{equ:chap04:embedding}
+	\label{fig:pe}
 	\widehat{\mathbf{E}}=\left[ \begin{array}{c}{\mathbf{E}_{s_{1}}+\mathbf{PE}_{1}} \\ 
 	{\mathbf{E}_{s_{2}}+\mathbf{PE}_{2}} \\ 
 	\cdots \\
@@ -122,13 +123,13 @@ Transfer\upcite{NIPS2017_7181}一样的方式，在模型输入的嵌入层中�
    \begin{minipage}{0.48\textwidth}
      \centering
      \includegraphics[height=6cm]{Scaled_Dot-Product_Attention.png} % ,width=\linewidth
-     \caption{Scaled\_Dot-Product\_Attention缩放点乘注意力结构图}
+     \caption{Scaled Dot-Product Attention缩放点乘注意力结构图}
      \label{Fig:Scaled_Dot-Product_Attention}
    \end{minipage}\hfill
    \begin {minipage}{0.48\textwidth}
      \centering
      \includegraphics[height=6cm]{Multi-Head_Attention.png} % ,width=\linewidth
-     \caption{Multi-Head\_Attention多头注意力模块结构图}
+     \caption{Multi-Head Attention多头注意力模块结构图}
      \label{Fig:Multi-Head_Attention}
    \end{minipage}
    % \caption{BiLSTM4Rec training}

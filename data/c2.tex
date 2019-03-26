@@ -1,4 +1,4 @@
-%!TEX root = ../document.tex
+﻿%!TEX root = ../document.tex
 \chapter{相关理论与技术分析}
 % \section{推荐系统}
 
@@ -17,7 +17,8 @@
 
 \section{序列感知模型}
 序列感知模型是把数据根据时间日期排序之后，按照数据之间的时间先后顺序，发现时间上近邻的数据之间的隐藏关系或数据的周期性变化规律等与时间有关系的一类数据挖掘模型，数据挖掘领域又常称这类模型为时序模型。因此序列感知模型面对的数据必须包含时间戳或者数据的存储形式能够不丢失数据的诞生先后顺序。时序模型数据分析的目的就是为了挖掘出数据之间的内在时间规律，找到这种时间规律之后利用其归纳、类推、演绎未来的数据变化趋势，从而进行建模样本之外的数据预测。
-2018年的ACM RecSys中还专门设立了关于序列感知推荐的课程并发布了一篇关于序列感知推荐的研究综述\upcite{Quadrana:2018:SRS:3209219.3209270}.
+2018年的ACM RecSys中还专门设立了关于序列感知推荐的课程并发布了一篇关于序列感知推荐的研究综述\upcite{Quadrana:2018:SRS:3209219.3209270}
+。
 
 
 
@@ -121,7 +122,7 @@ BRNN的隐藏层结构如图\ref{fig:brnn}所示。
 \end{figure}
 
 \subsection{时间卷积网络TCN}
-卷积神经网络通常用于计算机视觉领域的图像特征提取，将其应用于序列建模需要对卷积神经网络的结构做出修改，目前将卷积神经网络运用于序列建模的最良好算法为2018年Shaojie Bai等人提出的时间卷及网络（Temporal Convolutional Network，TCN）\cite{TCN2018}，本文在此把TCN作为CNN在序列建模领域的代表。
+卷积神经网络通常用于计算机视觉领域的图像特征提取，将其应用于序列建模需要对卷积神经网络的结构做出修改，目前将卷积神经网络运用于序列建模的最良好算法为2018年Shaojie Bai等人提出的时间卷积网络（Temporal Convolutional Network，TCN）\cite{TCN2018}，本文在此把TCN作为CNN在序列建模领域的代表。
 
 TCN由因果卷积（Causal Convolution）、扩张卷积（Dilated Convolution）和残差链接（Residual Connection）三部分构成。
 
@@ -156,7 +157,7 @@ $$
 \subsection{注意力机制}
 在自言语言处理的机器翻译算法中，有一类端到端的模型有着出色的性能。
 而为了说明深度学习中的注意力模型，就不得不先谈这一类端到端框架，因为目前大多数注意力模型都作为端到端框架下的一部分使用。
-其中代表工作为2014年Ilya Sutskever等人提出的Seq2Seq\cite{DBLP:journals/corr/GehringAGYD17}模型，Seq2Seq有一个编码器（Encoder）和一个解码器（Decoder）构成
+其中代表工作为2014年Ilya Sutskever等人提出的Seq2Seq\cite{DBLP:journals/corr/GehringAGYD17}模型，Seq2Seq有一个编码器（Encoder）和一个解码器（Decoder）构成。
 % \section{序列感知推荐}
 
 Seq2Seq模型中把序列建模问题当做一个条件概率问题：
@@ -167,14 +168,25 @@ $$
 $c_{i}$为该时刻状态的权重，其计算公式为$c_{i}=\sum_{j=1}^{T_{x}} \alpha_{ij} h_{j}$，其中$i$表示Encoder端的第$i$时刻输入。
 $h_{j}$表示Encoder端的第$j$个输入的隐向量，$\alpha_{i j}$表示Encoder端的%
 第$j$个输入与Decoder端的第$i$个输入之间的权值，表示源端第$j$个输入对目标端%
-第$i$个输入的影响程度，$\alpha_{i j}$的计算公式如公式\ref{eq:attention}所示：
+第$i$个输入的影响程度，$\alpha_{i j}$的计算公式如公式\eqref{attention}所示：
 \begin{align}
   \alpha_{i j}=\frac{\exp \left(e_{i j}\right)}{\sum_{k=1}^{T_{x}} \exp \left(e_{i k}\right)} \label{attention}
 \end{align} 
-其中$e_{i j}=a\left(s_{i-1}, h_{j}\right)$
+其中$e_{i j}=a\left(s_{i-1}, h_{j}\right)$。
 
-在公式6中，aij是一个softmax模型输出，概率值的和为1。eij表示一个对齐模型，用于衡量encoder端的位置j个词，对于decoder端的位置i个词的对齐程度（影响程度），换句话说：decoder端生成位置i的词时，有多少程度受encoder端的位置j的词影响。对齐模型eij的计算方式有很多种，不同的计算方式，代表不同的Attention模型，最简单且最常用的的对齐模型是dot product乘积矩阵，即把target端的输出隐状态ht与source端的输出隐状态进行矩阵乘。常见的对齐计算方式如下：
+在公式\eqref{attention}中，$\alpha_{ij}$是一个softmax模型输出，概率值的和为1。%
+$e_{i j}$表示一个对齐模型，用于衡量Encoder端的位置$j$个词，对于Decoder端的位置%
+$i$个词的对齐程度（影响程度），换句话说：Decoder端生成位置i的词时，有多少程度受%
+Encoder端的位置$j$的词影响。对齐模型$e_{i j}$的计算方式有很多种，不同的计算方式，代表不同%
+的Attention模型，最简单且最常用的的对齐模型是dot product乘积矩阵，即把target端%
+的输出隐状态ht与source端的输出隐状态进行矩阵乘。常见的对齐计算方式如下：
+\begin{align}
+\operatorname{score}\left(\boldsymbol{h}_{t}, \overline{\boldsymbol{h}}_{s}\right)=
+\left\{
+  \begin{array}{ll}{\boldsymbol{h}_{t}^{\top} \overline{\boldsymbol{h}}_{s}} & {\text { dot }} \\ {\boldsymbol{h}_{t}^{\top} \boldsymbol{W}_{a} \overline{\boldsymbol{h}}_{s}} & {\text { general }} \\ {\boldsymbol{v}_{a}^{\top} \tanh \left(\boldsymbol{W}_{\boldsymbol{a}}\left[\boldsymbol{h}_{t} ; \overline{\boldsymbol{h}}_{s}\right]\right)} & {\text {concat}}
+  \end{array}
+\right.
+\end{align} 
 
-
-\section{本章小结}
+% \section{本章小结}
 

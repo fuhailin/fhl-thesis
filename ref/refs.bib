@@ -1,26 +1,7 @@
-% Encoding: UTF-8
+% This file was created with JabRef 2.7.2.
+% Encoding: UTF8
 
-@InProceedings{hailin2018BiLSTM,
-author="Fu, Hailin
-and Li, Jianguo
-and Chen, Jiemin
-and Tang, Yong
-and Zhu, Jia",
-editor="Hong, Richang
-and Cheng, Wen-Huang
-and Yamasaki, Toshihiko
-and Wang, Meng
-and Ngo, Chong-Wah",
-title="Sequence-Based Recommendation with Bidirectional LSTM Network",
-booktitle="Advances in Multimedia Information Processing -- PCM 2018",
-year="2018",
-publisher="Springer International Publishing",
-address="Cham",
-pages="428--438",
-abstract="In modern recommendation systems, most methods often neglect the sequential relationship between items. So we propose a novel Sequence-based Recommendation model with Bidirectional Long Short-Term Memory neural network (BiLSTM4Rec) which can capture the sequential feature of items to predict what a user will choose next. By collecting consumed items of a user in a sequence with time ascending order, fitting the model with the last item as the label, the rest items as the features, we regard this recommendation assignment as a super multiple classification task. Once trained well, the output layer of our model will export the probabilities of the next items with given sequence. In the experiments, we compare our approach with several commonly used recommendation methods on a real-world dataset. Experimental results indicate that our sequence-based recommender can perform well for short-term interest prediction on a sparse, large dataset.",
-isbn="978-3-030-00764-5"
-}
-
+%------------------------------------------美丽的分割线，真实的引用，漂亮的引用--------------------------------------
 @article{chen2016hybrid,
   title={A Hybrid Collaborative Filtering Model: RSVD Meets Weighted-Network Based Inference},
   author={Chen, Jiemin and Li, Jianguo and Xiao, Jing and Tang, Yong and Fu, Hailin},
@@ -32,18 +13,14 @@ isbn="978-3-030-00764-5"
   publisher={臺灣學術網路管理委員會 \&Airiti Press Inc.}
 }
 
-@article{ZHANG2019121,
-title = "DeepRec: A deep neural network approach to recommendation with item embedding and weighted loss function",
-journal = "Information Sciences",
-volume = "470",
-pages = "121 - 140",
-year = "2019",
-issn = "0020-0255",
-doi = "https://doi.org/10.1016/j.ins.2018.08.039",
-url = "http://www.sciencedirect.com/science/article/pii/S0020025518306431",
-author = "Wen Zhang and Yuhang Du and Taketoshi Yoshida and Ye Yang",
-keywords = "DeepRec, Deep neural network, Recommender system, Item embedding, Weighted loss function",
-abstract = "Traditional collaborative filtering techniques suffer from the data sparsity problem in practice. That is, only a small proportion of all items in the recommender system occur in a user's rated item list. However, in order to retrieve items meeting a user's interest, all possible candidate items should be investigated. To address this problem, this paper proposes a recommendation approach called DeepRec, based on feedforward deep neural network learning with item embedding and weighted loss function. Specifically, item embedding learns numerical vectors for item representation, and weighted loss function balances popularity and novelty of recommended items. Moreover, it introduces two strategies, i.e. sampling by random (Ran-Strategy) and sampling by distribution (Pro-Strategy), to leave one item as output and the remaining as input from each user's historically rated item list. Max-pooling and average-pooling are employed to combine individual item vectors to derive users’ input vectors for feedforward deep neural network learning. Experiments on the App dataset and the Last.fm dataset demonstrate that the proposed DeepRec approach is superior to state-of-the-art techniques in recommending Apps and songs in terms of accuracy and diversity as well as complexity."
+@TechReport{43CNNIC,
+  title       = {第43次《中国互联网络发展状况统计报告》},
+  institution = {中国互联网络信息中心},
+  year        = {2019},
+  type        = {resreport},
+  address     = {https://www.cnnic.net.cn/hlwfzyj/hlwxzbg/hlwtjbg/201902/P020190228510533388308.pdf},
+  month       = feb,
+  url         = {https://www.cnnic.net.cn/hlwfzyj/hlwxzbg/hlwtjbg/201902/P020190228510533388308.pdf},
 }
 
 @ARTICLE{YangTransfer, 
@@ -108,15 +85,6 @@ month={Nov},}
  keywords = {personalized recommendation, transfer learning, user profile},
 } 
 
-@TechReport{43CNNIC,
-  title       = {第43次《中国互联网络发展状况统计报告》},
-  institution = {中国互联网络信息中心},
-  year        = {2019},
-  type        = {resreport},
-  address     = {https://www.cnnic.net.cn/hlwfzyj/hlwxzbg/hlwtjbg/201902/P020190228510533388308.pdf},
-  month       = feb,
-  url         = {https://www.cnnic.net.cn/hlwfzyj/hlwxzbg/hlwtjbg/201902/P020190228510533388308.pdf},
-}
 
 @Article{LSTM1997,
   author     = {Hochreiter, Sepp and Schmidhuber, J\"{u}rgen},
@@ -352,16 +320,21 @@ month={Nov},}
   pages     = {2643--2651},
 }
 
-@InProceedings{NIPS2007_3208,
-  author    = {Mnih, Andriy and Salakhutdinov, Ruslan R},
-  title     = {Probabilistic Matrix Factorization},
-  booktitle = {Advances in Neural Information Processing Systems 20},
-  year      = {2008},
-  editor    = {J. C. Platt and D. Koller and Y. Singer and S. T. Roweis},
-  pages     = {1257--1264},
-  publisher = {Curran Associates, Inc.},
-  url       = {http://papers.nips.cc/paper/3208-probabilistic-matrix-factorization.pdf},
-}
+@inproceedings{Salakhutdinov:2007:PMF:2981562.2981720,
+ author = {Salakhutdinov, Ruslan and Mnih, Andriy},
+ title = {Probabilistic Matrix Factorization},
+ booktitle = {Proceedings of the 20th International Conference on Neural Information Processing Systems},
+ series = {NIPS'07},
+ year = {2007},
+ isbn = {978-1-60560-352-0},
+ location = {Vancouver, British Columbia, Canada},
+ pages = {1257--1264},
+ numpages = {8},
+ url = {http://dl.acm.org/citation.cfm?id=2981562.2981720},
+ acmid = {2981720},
+ publisher = {Curran Associates Inc.},
+ address = {USA},
+} 
 
 @InProceedings{li2008pfp,
   author       = {Li, Haoyuan and Wang, Yi and Zhang, Dong and Zhang, Ming and Chang, Edward Y},
@@ -879,5 +852,4 @@ month={Nov},}
   timestamp     = {Mon, 13 Aug 2018 16:48:06 +0200},
   url           = {http://arxiv.org/abs/1409.3215},
 }
-
-@Comment{jabref-meta: databaseType:bibtex;}
+%------------------------------------------美丽的分割线，真实的引用，漂亮的引用--------------------------------------

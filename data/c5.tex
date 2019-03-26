@@ -18,25 +18,7 @@ Movielens 100K和Movielens 1M。
 Yoochoose包含了一个在线电子商务网站在6个月时间内用户所有的点击会话流。%
 
 
-% \begin{table}[htbp]
-% \centering
-% \caption{数据集}
-% \label{tab:dataset}
-% \begin{minipage}[t]{0.9\linewidth}
-% \begin{tabular*}{\linewidth}{c @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c
-% @{\extracolsep{\fill}} c @{\extracolsep{\fill}} c }
-% \toprule[1.5pt]
-% {\hei 数据集} & {\hei 类型} & {\hei 语言}
-%  & {\hei 数量}\\
-% \midrule[1pt]
-% WWW & 论文摘要 & 英文 &  1330\\
-% KDD & 论文摘要 & 英文 &  755\\
-% Hulth03 & 论文摘要 & 英文 & 500\\
-% \bottomrule[1.5pt]
-% \end{tabular*}
-% \label{tab3}
-% \end{minipage}
-% \end{table}
+
 
 
 \section{评价指标}
@@ -56,19 +38,44 @@ Recall@N=\frac{\sum_{u}|\hat{I}_{u}^{t+1}\cap I_{u}^{t+1} |}{\left |\sum_{u}|I_{
 由于$Precision@N$和$Recall@N$值可以通过阈值调整来相互权衡，为了得到一个更加容易量化评估%
 的指标，本文引入了$F1@N$指标，如果$F1@N$分数越大，可以认为模型的效果更好。而当一次为%
 用户推荐多个结果时，推荐结果在屏幕上展示的位置也会影响物品被点击的概率，越靠前的物品越可能被点击，%
-而引入$NDGG@N$指标的原因就是为了感知这种位置的影响，让点击率越高的物品位置越靠前，$NDGG@N$%
-值越大，得到的相关推荐结果中前N个物品的排序越准确，所以$F1@N$和$NDGG@N$的计算形式如下：
-
+约强相关的推荐物品应该出现在结果列表的越前面，而引入$NDCG@N$指标的原因就是为了感知这种%
+位置的影响，让点击率越高的物品位置越靠前，$NDCG@N$%
+值越接近1，得到的相关推荐结果中前N个物品的排序越准确，所以$F1@N$和$NDCG@N$的计算形式如下：
 \begin{equation}
 F1@N=\frac{2\times Precision@N\times Recall@N}{Precision@N+Recall@N}
 \end{equation}
-
 \begin{equation}
-NDGG@N = \frac{\sum_{i=1}^{N} \frac{2^{r e l_{i}}-1}{\log _{2}(i+1)}}{\sum_{i=1}^{|R E L|} \frac{2^{r e l_{i}}-1}{\log _{2}(i+1)}}
+  \begin{aligned}
+  DCG@N &= \sum_{i=1}^{N} \frac{2^{rel_{i}}-1}{\log _{2}(i+1)} \\
+  IDCG@N &= \sum_{i=1}^{|REL|} \frac{2^{rel_{i}}-1}{\log _{2}(i+1)} \\
+  NDCG@N &= \frac{DCG@N}{IDCG@N}
+  \label{E21}
+  \end{aligned}
 \end{equation}
+当推荐的物品是用户点击的内容时$DCG@N$中$rel$取值为1，否则$rel$取值为0。而由于每条样本仅有一条为相关，其余均为不相关，所以 $IDCG@N$ 对于每条样本都是一样的，即$\frac{1}{\log 2}$。
 
+\section{实验环境}
+
+% Please add the following required packages to your document preamble:
+
+\begin{table}[H]
+\centering
+\caption{实验软硬件环境配置表}
+\label{tab:set}
+  \begin{tabular}{@{}ll@{}}
+  \toprule
+  实验环境 & 环境配置                                  \\ \midrule
+  CPU  & Intel(R) Xeon(R) CPU E5-2650 v3 @ 2.30GHz *2 \\
+  GPU  & Tesla K80 *4                                 \\
+  内存   & 64126MB                                      \\
+  OS   & CentOS Linux 7 (Core)                        \\
+  编程语言 & Python 3.6.8                                 \\
+  开发工具 & TensorFlow-GPU 1.12.0                        \\ \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{实验结果与分析}
+
 
 \subsection{关键词抽取结果}
 

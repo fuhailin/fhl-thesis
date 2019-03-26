@@ -1,4 +1,4 @@
-%!TEX root = ../document.tex
+﻿%!TEX root = ../document.tex
 \chapter{绪论}
 \section{研究背景与意义}
 
@@ -72,7 +72,7 @@
 (Item-based Collaborative Filtering，IBCF)。
 而基于模型的协同过滤则主要利用评分信息训练相应的模型，然后使用这个模型对未知数据进行预测，%
 这类算法有贝叶斯网络\upcite{Chen02abayesian}、聚类模型\upcite{ungar1998clustering}、%
-概率矩阵分解\upcite{NIPS2007_3208}等等。
+概率矩阵分解\upcite{Salakhutdinov:2007:PMF:2981562.2981720}等等。
 在基于内容的推荐算法中仅利用了单个用户的行为和数据给出对用户的推荐，特别是物品的描述和用户的属性描述在内容推荐中起到了关键作用。基于内容的
 推荐精确度往往有限，还面临着严重的冷启动问题。
 混合推荐系统则通过将上述两大类算法中的一个或多个结合起来以避免和克服某个单一算法带来的缺点。混合推荐算法中比较常见的方式是将基于内容的推荐方法与其他方法进行融合以避免冷启动、数据稀疏和扩展性等问题。
@@ -97,7 +97,7 @@
 串行融合的方式主要将FM等模型的输出作为MLP的输入，将FM视为交叉特征提取器，这类模型有：
 Weinan Zhang等在 2016 年提出的因子分解机神经网络（Factorisation Machine supported Neural Network，FNN）\upcite{Zhang_2016}，其将考FM与MLP进行了串联结合，利用FM为多层感知机MLP提取二维交叉特征进行点击率预估推荐；
 Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factorization Machines，NFM）\upcite{He_2017}加入了池化层，将FM生成的二维交叉特征进行了元素级别的两两向量内积，引入了更多的非线性关系；
-和Jun Xiao等人在2017年提出了注意力因子分解模型（Attentional Factorization Machine，AFM）\upcite{Xiao_2017}，用注意力网络替换了上述两个模型中MLP，让Attention网络更好利用FM的二阶特征；Yanru Qu等人在2016年提出了基于向量积的神经网络（Product-based Neural Networks，PNN）\cite{Qu_2016}，与NFM不同的是使用了FM生成的二维交叉特征进行了元素级别的两两向量内积进行计算。
+和Jun Xiao等人在2017年提出了注意力因子分解模型（Attentional Factorization Machine，AFM）\upcite{Xiao_2017}，用注意力网络替换了上述两个模型中MLP，让Attention网络更好利用FM的二阶特征；Yanru Qu等人在2016年提出了基于向量积的神经网络（Product-based Neural Networks，PNN）\upcite{Qu_2016}，与NFM不同的是使用了FM生成的二维交叉特征进行了元素级别的两两向量内积进行计算。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=\linewidth]{AFM.png}\\
@@ -108,22 +108,22 @@ Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factoriza
 而串行融合的方式则是利用两个或多个网络模块，每个子模块负责提取不同维度的特征为主要思路，构建点击二分类算法。这类模型主要有：
 
 
-2017年Huifeng Guo等人将FM与MLP并行连接，提出的DeepFM模型\cite{ijcai2017-239}，两个组件网络共享同一个输入并行训练，能同时提取特征的低维和高维特征；
-2016年Heng-Tze Cheng等人将一个Wide网络模型与深层网络Deep模型并行连接，利用Wide模块提升模型的记忆性，利用Deep模块提升模型的泛化性，构造的Wide\&Deep模型\cite{Cheng_2016};
-2017年Ruoxi Wang等人将深层网络Deep与一个交叉网络Cross并行连接，利用不同层数的Cross网络构造出任意维度的交叉特征，提出了Deep\&Cross模型\cite{Wang:2017:DCN:3124749.3124754}；
-2018年Jianxun Lian等人提出了一个新颖的压缩交互网络（Compressed Interaction Network， CIN）的神经模型用于自动学习显式的高阶特征交互，然后将其与DNN模块并行集成，构造了一个名为极深因子分解机的模型（xDeepFM）\cite{Lian:2018:XCE:3219819.3220023}用于同时以显式和隐式的方式自动学习高阶的特征交互。
+2017年Huifeng Guo等人将FM与MLP并行连接，提出的DeepFM模型\upcite{ijcai2017-239}，两个组件网络共享同一个输入并行训练，能同时提取特征的低维和高维特征；
+2016年Heng-Tze Cheng等人将一个Wide网络模型与深层网络Deep模型并行连接，利用Wide模块提升模型的记忆性，利用Deep模块提升模型的泛化性，构造的Wide\&Deep模型\upcite{Cheng_2016};
+2017年Ruoxi Wang等人将深层网络Deep与一个交叉网络Cross并行连接，利用不同层数的Cross网络构造出任意维度的交叉特征，提出了Deep\&Cross模型\upcite{Wang:2017:DCN:3124749.3124754}；
+2018年Jianxun Lian等人提出了一个新颖的压缩交互网络（Compressed Interaction Network， CIN）的神经模型用于自动学习显式的高阶特征交互，然后将其与DNN模块并行集成，构造了一个名为极深因子分解机的模型（xDeepFM）\upcite{Lian:2018:XCE:3219819.3220023}用于同时以显式和隐式的方式自动学习高阶的特征交互。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=\linewidth]{Deep_Cross.png}\\
   \caption{并行深度网络推荐模型之——Deep\&Cross网络结构图\upcite{Wang:2017:DCN:3124749.3124754}}
   \label{fig:Deep_Cross}
 \end{figure}
-在串行模型与并行模型之外，又有一类综合并行结构与串行结构，如2018年Guorui Zhou等人先后提出了深度兴趣网络（Deep Interest Network，DIN）\cite{Zhou:2018:DIN:3219819.3219823}和深度兴趣演化网络（Deep Interest Evolution Network ，DIEN）\cite{zhou2018deep}，DIN的并行结构体现在对用户侧历史行为特征域和物品侧特征域并行嵌入，堆叠组合成的向量再输入到全连接神经网络中去。DIEN对DIN的改进在于并行结构的特征嵌入部分考虑到了用户兴趣的演化进程，其使用双层GRU对用户历史行为的序列进行建模，将建模后的向量一起并入堆叠向量当中。
+在串行模型与并行模型之外，又有一类综合并行结构与串行结构，如2018年Guorui Zhou等人先后提出了深度兴趣网络（Deep Interest Network，DIN）\upcite{Zhou:2018:DIN:3219819.3219823}和深度兴趣演化网络（Deep Interest Evolution Network ，DIEN）\upcite{zhou2018deep}，DIN的并行结构体现在对用户侧历史行为特征域和物品侧特征域并行嵌入，堆叠组合成的向量再输入到全连接神经网络中去。DIEN对DIN的改进在于并行结构的特征嵌入部分考虑到了用户兴趣的演化进程，其使用双层GRU对用户历史行为的序列进行建模，将建模后的向量一起并入堆叠向量当中。
 
 \subsection{序列感知推荐研究现状}
 
 现有的推荐算法几乎很少有考虑到隐藏在用户历史行为序列中的用户兴趣动态变化情况，而且以上提到的基于深度学习的推荐算法都是以构造大量特征为基础进行建模的，这些算法都需要收集大量用户隐私数据，况且在某些特殊应用场景下，例如用户在使用在线服务但并未登陆或匿名的情况下，以构造大量特征为前提的算法将全部失效。考虑到这三类情况，本文提出了序列感知推荐算法，以用户历史行为组成的序列为数据进行建模推荐，无需使用大量用户隐私相关数据，在用户匿名状态下也可以根据当前服务的会话构成行为序列。
-序列感知推荐算法许多学者称为基于会话的推荐算法，其中使用的序列建模算法基本可以分为RNN和CNN两大方向。在使用RNN进行序列建模推荐算法中，其中最广为人知的工作为2016年Balazs Hidasi等于提出的使用循环神经网络的基于会话的推荐算法GRU4Rec\cite{DBLP:journals/corr/HidasiKBT15}，首次通过使用循环神经网络利用会话的序列进行建模推荐，这次类似使用循环神经网络对序列进行建模进行推荐的还有Devooght等人于2017年提出的\cite{devooght2016collaborative,Devooght:2017:LSR:3079628.3079670}，2017年Yu Zhu等人在使用LSTM对序列建模的基础上加上了对时间间隔的考虑，提出了Time-LSTM模型\cite{ijcai2017-504}。
+序列感知推荐算法许多学者称为基于会话的推荐算法，其中使用的序列建模算法基本可以分为RNN和CNN两大方向。在使用RNN进行序列建模推荐算法中，其中最广为人知的工作为2016年Balazs Hidasi等于提出的使用循环神经网络的基于会话的推荐算法GRU4Rec\upcite{DBLP:journals/corr/HidasiKBT15}，首次通过使用循环神经网络利用会话的序列进行建模推荐，这次类似使用循环神经网络对序列进行建模进行推荐的还有Devooght等人于2017年提出的\upcite{devooght2016collaborative,Devooght:2017:LSR:3079628.3079670}，2017年Yu Zhu等人在使用LSTM对序列建模的基础上加上了对时间间隔的考虑，提出了Time-LSTM模型\upcite{ijcai2017-504}。
 \begin{figure}[htb]
   \centering
   \includegraphics[height=6cm]{GRU4Rec.png}\\
@@ -131,7 +131,7 @@ Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factoriza
   \label{fig:GRU4Rec}
 \end{figure}
 
-2018年Jiaxi Tang等人将序列嵌入矩阵使用CNN提出特征，提出了卷积序列嵌入推荐模型Caser\cite{Tang:2018:PTS:3159652.3159656}。
+2018年Jiaxi Tang等人将序列嵌入矩阵使用CNN提出特征，提出了卷积序列嵌入推荐模型Caser\upcite{Tang:2018:PTS:3159652.3159656}。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=\linewidth]{Caser.png}\\
