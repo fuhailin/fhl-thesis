@@ -93,8 +93,8 @@
 点击率预估的通常做法是将推荐问题转化为二分类的有监督学习问题，算法建模的样本对象是物品，将用户的特征与物品特征拼接在一起构造高维样本，预测对象用户是否可能会点击目标物品。
 在深度学习技术没有被引入点击率预估之前，传统做法通常使用逻辑回归\upcite{Kondakindi2014ALR}进行点击二分类，但这需要构造大量手工特征，FM\upcite{Rendle:2010:FM:1933307.1934620,Rendle:2012:FML:2168752.2168771}、FFM\upcite{Juan:2016:FFM:2959100.2959134}和GBDT+LR\upcite{He:2014:PLP:2648584.2648589}的出现让这类点击二分类模型能够自动学习到一些二维组合特征或者一些高维特征。随着深度学习的引入，特征的挖掘变得更加充分，组合特征的学习变得更加高效。
 
-深层神经网络模型引入到点击二分类算法当中大多是通过神经网络与其他基础算法结合的方式构建混合模型，这些方法根据其网络融合的方式大致可以分为串行融合和并行融合两大部分。
-串行融合的方式主要将FM等模型的输出作为MLP的输入，将FM视为交叉特征提取器，这类模型有：
+深层神经网络模型引入到点击二分类算法当中大多是通过神经网络与其他基础算法结合的方式构建混合模型，这些方法根据其网络融合的方式大致可以分为\textbf{串行融合}和\textbf{并行融合}两大部分。
+\textbf{串行融合}的方式主要将FM等模型的输出作为MLP的输入，将FM视为交叉特征提取器，这类模型有：
 Weinan Zhang等在 2016 年提出的因子分解机神经网络（Factorisation Machine supported Neural Network，FNN）\upcite{Zhang_2016}，其将考FM与MLP进行了串联结合，利用FM为多层感知机MLP提取二维交叉特征进行点击率预估推荐；
 Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factorization Machines，NFM）\upcite{He_2017}加入了池化层，将FM生成的二维交叉特征进行了元素级别的两两向量内积，引入了更多的非线性关系；
 和Jun Xiao等人在2017年提出了注意力因子分解模型（Attentional Factorization Machine，AFM）\upcite{Xiao_2017}，用注意力网络替换了上述两个模型中MLP，让Attention网络更好利用FM的二阶特征；Yanru Qu等人在2016年提出了基于向量积的神经网络（Product-based Neural Networks，PNN）\upcite{Qu_2016}，与NFM不同的是使用了FM生成的二维交叉特征进行了元素级别的两两向量内积进行计算。
@@ -105,7 +105,7 @@ Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factoriza
   \label{fig:AFM}
 \end{figure}
 
-而串行融合的方式则是利用两个或多个网络模块，每个子模块负责提取不同维度的特征为主要思路，构建点击二分类算法。这类模型主要有：
+而\textbf{并行融合}的方式则是利用两个或多个网络模块，每个子模块负责提取不同维度的特征为主要思路，构建点击二分类算法。这类模型主要有：
 
 
 2017年Huifeng Guo等人将FM与MLP并行连接，提出的DeepFM模型\upcite{ijcai2017-239}，两个组件网络共享同一个输入并行训练，能同时提取特征的低维和高维特征；
@@ -118,26 +118,28 @@ Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factoriza
   \caption{并行深度网络推荐模型之——Deep\&Cross网络结构图\upcite{Wang:2017:DCN:3124749.3124754}}
   \label{fig:Deep_Cross}
 \end{figure}
-在串行模型与并行模型之外，又有一类综合并行结构与串行结构，如2018年Guorui Zhou等人先后提出了深度兴趣网络（Deep Interest Network，DIN）\upcite{Zhou:2018:DIN:3219819.3219823}和深度兴趣演化网络（Deep Interest Evolution Network ，DIEN）\upcite{zhou2018deep}，DIN的并行结构体现在对用户侧历史行为特征域和物品侧特征域并行嵌入，堆叠组合成的向量再输入到全连接神经网络中去。DIEN对DIN的改进在于并行结构的特征嵌入部分考虑到了用户兴趣的演化进程，其使用双层GRU对用户历史行为的序列进行建模，将建模后的向量一起并入堆叠向量当中。
+在串行模型与并行模型之外，又有一类\textbf{综合并行结构与串行的结构}，如2018年Guorui Zhou等人先后提出了深度兴趣网络（Deep Interest Network，DIN）\upcite{Zhou:2018:DIN:3219819.3219823}和深度兴趣演化网络（Deep Interest Evolution Network ，DIEN）\upcite{zhou2018deep}，DIN的并行结构体现在对用户侧历史行为特征域和物品侧特征域并行嵌入，堆叠组合成的向量再输入到全连接神经网络中去。DIEN对DIN的改进在于并行结构的特征嵌入部分考虑到了用户兴趣的演化进程，其使用双层GRU对用户历史行为的序列进行建模，将建模后的向量一起并入堆叠向量当中。
 
 \subsection{序列感知推荐研究现状}
 
 现有的推荐算法几乎很少有考虑到隐藏在用户历史行为序列中的用户兴趣动态变化情况，而且以上提到的基于深度学习的推荐算法都是以构造大量特征为基础进行建模的，这些算法都需要收集大量用户隐私数据，况且在某些特殊应用场景下，例如用户在使用在线服务但并未登陆或匿名的情况下，以构造大量特征为前提的算法将全部失效。考虑到这三类情况，本文提出了序列感知推荐算法，以用户历史行为组成的序列为数据进行建模推荐，无需使用大量用户隐私相关数据，在用户匿名状态下也可以根据当前服务的会话构成行为序列。
-序列感知推荐算法许多学者称为基于会话的推荐算法，其中使用的序列建模算法基本可以分为RNN和CNN两大方向。在使用RNN进行序列建模推荐算法中，其中最广为人知的工作为2016年Balazs Hidasi等于提出的使用循环神经网络的基于会话的推荐算法GRU4Rec\upcite{DBLP:journals/corr/HidasiKBT15}，首次通过使用循环神经网络利用会话的序列进行建模推荐，这次类似使用循环神经网络对序列进行建模进行推荐的还有Devooght等人于2017年提出的\upcite{devooght2016collaborative,Devooght:2017:LSR:3079628.3079670}，2017年Yu Zhu等人在使用LSTM对序列建模的基础上加上了对时间间隔的考虑，提出了Time-LSTM模型\upcite{ijcai2017-504}。
+序列感知推荐算法许多学者称为基于会话的推荐算法，其中使用的序列建模算法基本可以分为RNN和CNN两大方向。在使用RNN进行序列建模推荐算法中，其中最广为人知的工作为2016年Balazs Hidasi等于提出的使用循环神经网络的基于会话的推荐算法GRU4Rec\upcite{DBLP:journals/corr/HidasiKBT15}，首次通过使用循环神经网络利用会话的序列进行建模推荐，这类使用循环神经网络对序列进行建模进行推荐的还有Devooght等人于2017年提出的\upcite{devooght2016collaborative,Devooght:2017:LSR:3079628.3079670}，2017年Yu Zhu等人在使用LSTM对序列建模的基础上加上了对时间间隔的考虑，提出了Time-LSTM模型\upcite{ijcai2017-504}。
 \begin{figure}[htb]
   \centering
   \includegraphics[height=6cm]{GRU4Rec.png}\\
   \caption{使用循环神经网络进行序列推荐算法之——GRU4Rec网络结构图\upcite{DBLP:journals/corr/HidasiKBT15}}
   \label{fig:GRU4Rec}
 \end{figure}
+基于RNN的序列建模方法有较好的性能，但受固于RNN的递归结构，算法难以并行实现。
 
-2018年Jiaxi Tang等人将序列嵌入矩阵使用CNN提出特征，提出了卷积序列嵌入推荐模型Caser\upcite{Tang:2018:PTS:3159652.3159656}。
+另外一类序列感知推荐算法的方向是使用CNN对用户行为历史记录进行序列建模，CNN常用于计算机视觉领域图像特征提取，用于序列建模需要对基本的卷积结构进行大量的修改，这其中知名的工作有2018年Jiaxi Tang等人将序列嵌入矩阵使用CNN提取特征，提出的卷积序列嵌入推荐模型Caser\upcite{Tang:2018:PTS:3159652.3159656}。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=\linewidth]{Caser.png}\\
   \caption{使用卷积神经网络进行序列推荐算法之——Caser网络结构图\upcite{Tang:2018:PTS:3159652.3159656}}
   \label{fig:Caser}
 \end{figure}
+基于CNN的序列建模方法记忆的序列长度严重依赖卷积层的深度。
 
 \section{研究内容和方法}
 \subsection{研究内容}
@@ -165,7 +167,7 @@ Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factoriza
           数据构造特征的情况下，提出了只利用用户历史行为序列的序列感知推荐算法。
     \item 本文设计了基于双向长短期记忆网络的序列感知推荐模型，对用户历史行为序列进行嵌入式表达，生成稠密矩阵，%
           利用双向长短期记忆网络对嵌入矩阵进行序列建模，预测下一个物品，将推荐问题转变成一个多分类问题。
-    \item 考虑到循环神经网络在训练方面的效率问题，本文从Transformer结构中抽取Self-Attention模块，%
+    \item 考虑到循环神经网络在训练方面的效率问题，本文从Transformer\upcite{NIPS2017_7181}结构中抽取Self-Attention模块，%
           将序列感知推荐模型中的循环神经网络序列特征抽取算法替换为Self-Attention，该模型在生成较大%
           推荐精度的情况下还不损失性能。
 \end{enumerate}
