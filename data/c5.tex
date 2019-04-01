@@ -150,14 +150,15 @@ Transformer4Rec模型在MovieLens-1M上使用合适的学习率损失函数可�
 
 % \subsection{实验三}
 
-\subsection{对比实验}
+\section{对比实验}
+\subsection{算法测评指标对比}
 \textbf{POP}：最流行物品推荐法POP作为本文选择的最简单的基准线，通过统计训练数据中出现次数最多的物品，推荐策略为为用户推荐那些他还没有看过的最热门的物品。
 
-\textbf{GRU4Rec\upcite{DBLP:journals/corr/HidasiKBT15,Hidasi:2018:RNN:3269206.3271761}}：GRU4Rec是序列感知推荐领域最重要的算法之一，2016年Balazs Hidasi等人首次将循环神经网络的方法应用到基于会话的个性化推荐领域，并取得了当时的最好效果，因此本文将其作为\textit{基于循环神经网络的序列感知推荐算法}中的代表，其代码基于Keras\upcite{chollet2015keras}提供的GRU高层API实现。
+\textbf{GRU4Rec\upcite{DBLP:journals/corr/HidasiKBT15,Hidasi:2018:RNN:3269206.3271761}}：GRU4Rec是序列感知推荐领域最重要的算法之一，2016年Balazs Hidasi等人首次将循环神经网络的方法应用到基于会话的个性化推荐领域，并取得了当时的最好效果，因此本文将其作为\textit{基于循环神经网络的序列感知推荐算法}中的代表，其代码基于Keras\footnote{\url{https://keras.io}}提供的GRU高层API实现。
 
 \textbf{Caser\upcite{Tang:2018:PTS:3159652.3159656}}：2018年Jiaxi Tang等人将序列嵌入矩阵使用CNN提取特征，提出了卷积序列嵌入推荐模型Caser，因此本文将其作为\textit{基于卷积神经网络的序列感知推荐算法}中的代表，其代码实现基于原作者开源的PyTorch实现版本\upcite{paszke2017automatic}。
 
-本文讨论的两个模型与三个对比模型的分别在MovieLens-1M与Yoochoose数据集上的实验结果如表\ref{table:result}所示。使用双向长短期记忆网络的BiLSTM4Rec模型相比GRU4Rec，有约15\%的推荐准确性提升。
+本文讨论的两个模型与三个对比模型的分别在MovieLens-1M与Yoochoose数据集上的实验结果如表\ref{table:result}所示。
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
@@ -179,17 +180,15 @@ Transformer4Rec模型在MovieLens-1M上使用合适的学习率损失函数可�
                                 & NDCG@10      & 0.019779 & 0.055170 & 0.063445 & 0.4621 & 0.5066      \\ \cmidrule(l){2-7} 
   \end{tabular}
 \end{table}
+使用双向长短期记忆网络的BiLSTM4Rec模型相比GRU4Rec，有约15\%的推荐准确性提升，这说明双向结构对序列建模问题能起到比简单单向结构更好的效果。
+而基于Transformer结构的Transformer4Rec达到了对比实验中最好的效果，说明引入Attention机制能够更好地突出重点信息，提取到的序列特征表达更加
+准确。
 
-% \section{实验结果与分析}
-
-
-
-% \subsection{结果分析}
-
-\section{算法运行时间比较}
+\subsection{算法运行时间比较}
 
 在3.4节和4.3节，分别分析了第三章基于双向LSTM的序列感知推荐方法和第四章基于自注意力机制的%
-序列感知推荐方法的时间复杂度，表\ref{tab:runtime}给出了本实验中各个算法在测试集上预测的运行时间，%
+序列感知推荐方法的时间复杂度，在推荐领域，面对大数据的压力时，模型的返回时延与效率更是选择模型应用的重要考虑因素，
+表\ref{tab:runtime}给出了本实验中各个算法在测试集上预测的运行时间，%
 其中MovieLens-1M测试集中包含1208条平均序列长度为165.56的样本，由于对序列长度小于5的用户数据进行了过滤，Yoochoose测试集中包含43298条平均长度为10.09的样本，
 对于每个样本，每种算法都给出可能性
 最高的10个推荐结果，测试集算法运行时间不包含评估阶段。
@@ -198,14 +197,14 @@ Transformer4Rec模型在MovieLens-1M上使用合适的学习率损失函数可�
 \caption{各算法测试集预测时间比较}
 \label{tab:runtime}
 \begin{tabular}{@{}llllll@{}}
-数据集          & POP  & GRU4Rec & Caser & BiLSTM & Self-Attention \\ \midrule
+数据集          & POP  & GRU4Rec & Caser & BiLSTM4Rec & Transformer4Rec \\ \midrule
 Movielens-1M & 1.99ms &  18.35s  & 19.1s &  21.1s   &    1.7s         \\ \bottomrule
 Yoochoose    & 17.5ms &  30.7s   & 31.98s &  46.9s  &    11.3s      
 \end{tabular}
 \end{table}
-基于双向循环神经网络的BiLSTM方法正向与反向可以并行，基于卷积结构的Caser算法在进行序列建模时，长序列的记忆能力严重依赖网络的深度，
-
+从表中可以看出，具有最简单结构的POP算法具有最高效的查询返回时延，除此之外，Transformer4Rec模型在具有复杂深度网络结构的模型中
+取得了最好的查询返回时延，而基于双向循环神经网络的BiLSTM4Rec方法虽然正向与反向可以并行，但其LSTM本身结构并为做多大改进，双向结构反而增加了一定时间复杂度。
 \section{本章小结}
-
+本章首先主要介绍了实验中采用了两大公开数据集，MovieLens与Yoochoose，然后介绍了推荐排序领域广泛采用的测评标准。对于本文提出的两个基于双向循环神经网络的BiLSTM4Rec模型和基于Self-Attention的Transformer4Rec模型对其实验过程分别进行了描述。为了对比本文模型的性能，引入热门推荐POP和基于循环结构的序列感知推荐代表GRU4Rec和基于卷积结构的序列感知推荐代表Caser。考虑到模型过于复杂时可能引入的大数据压力问题，并从查询返回时延的角度分析了各个对比算法的效率，最后根据实验结果从多个角度分析了本文设计的模型的可行性和有效性。
 
 
