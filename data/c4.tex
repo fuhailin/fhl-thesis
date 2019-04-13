@@ -1,7 +1,7 @@
 ﻿%!TEX root = ../document.tex
-\chapter{基于自注意力机制的序列感知推荐}
+\chapter{基于自注意力机制的序列感知推荐算法}
 
-\section{问题的提出}
+% \section{问题的提出}
 在多个不同的机器学习领域，例如图像描述、机器翻译、阅读理解、摘要生成还有一些其他的应用上，已经证明注意力机制是有明显效果的%
 这一机制背后的重要思想是影响序列输出的因素只与序列中某些重要信息相关，而无需过多关注其他无用的信息。这一机制的命名受到人类视觉系统中视觉焦点的启示，所以称为注意力机制。
 
@@ -125,7 +125,6 @@ Encoder用来处理输入序列$x_{1},x_{2},x_{3},\cdots ,x_{t-1},x_{t}$，将�
 \end{align}
 
 \textbf{多头注意力机制Multi-Head Attention}
-{}
 与其只让单个Self-Attention模块来学习$d$维的\textit{查询(query)}，\textit{键(key)}和\textit{值(value)}，可以通过集成学习的方法，让多个Self-Attention模块分别学习不同位置子空间的表达，由于随机初始化的不同，每个Self-Attention模块的关注点将会有所差异，所以每个Self-Attention模块可以分别学习到三个不同的$d_{k}$维的\textit{查询(query)}、$d_{k}$维的\textit{键(key)}和$d_{v}$维的\textit{值(value)}向量。每个Self-Attention模块有了\textit{查询(query)}、\textit{键(key)}和\textit{值(value)}之后，就能得到$d_{v}$维的输出。而Multi-Head Attention是多个Scaled Dot-product Attention的并行叠加，因此Multi-Head Attention的计算复杂度与Scaled Dot-product Attention相当，但是却获得了更好的泛化性能。因此这部分Multi-Head Attention的计算方式如下：
 \begin{align} 
 	\text { MultiHead }(\widehat{\mathbf{E}}) =\text { Concat }[\mathrm{SA}_{1}(\widehat{\mathbf{E}}), \ldots, \mathrm{SA}_{h}(\widehat{\mathbf{E}})] W^{O}
@@ -136,21 +135,20 @@ Encoder用来处理输入序列$x_{1},x_{2},x_{3},\cdots ,x_{t-1},x_{t}$，将�
    \begin{minipage}{0.48\textwidth}
      \centering
      \includegraphics[height=6cm]{Scaled_Dot-Product_Attention.png} % ,width=\linewidth
-     \caption{Scaled Dot-Product Attention缩放点乘注意力结构图}
+     \caption{Scaled Dot-Product Attention缩放点乘注意力结构图\upcite{NIPS2017_7181}}
      \label{Fig:Scaled_Dot-Product_Attention}
    \end{minipage}\hfill
    \begin {minipage}{0.48\textwidth}
      \centering
      \includegraphics[height=6cm]{Multi-Head_Attention.png} % ,width=\linewidth
-     \caption{Multi-Head Attention多头注意力模块结构图}
+     \caption{Multi-Head Attention多头注意力模块结构图\upcite{NIPS2017_7181}}
      \label{Fig:Multi-Head_Attention}
    \end{minipage}
    % \caption{BiLSTM4Rec training}
    % \label{fig:coffee}
 \end{figure}
 
-\textbf{结构中逐项的feed-forward网络作用}
-
+\textbf{结构中逐项的feed-forward网络}
 考虑到Self-Attention模块在学习物品嵌入向量的过程中仍然是一个广义线性模型，为了增强整个Transformer模型的非线性拟合能力，Multi-Head Attention子层后面跟了一个前馈神经网络FFN层，为了保证模型计算的效率，它仅由两个线性变换组成，中间嵌入一个Relu激活函数来提升非线性表达能力，因此这一部分的形式如下：
 \begin{align}
 	\mathbf{F}_{i}=\mathrm{FFN}\left(\mathbf{S}_{i}\right)=\operatorname{ReLU}\left(\mathbf{S}_{i} \mathbf{W}^{(1)}+\mathbf{b}^{(1)}\right) \mathbf{W}^{(2)}+\mathbf{b}^{(2)}
@@ -158,7 +156,6 @@ Encoder用来处理输入序列$x_{1},x_{2},x_{3},\cdots ,x_{t-1},x_{t}$，将�
 其中$\mathbf{S}_{i}$表示嵌入层经过第$i$个Self-Attention模块计算后的输出
 
 \textbf{Residual Connections残差连接}
-
 在序列建模的问题当中，用户最后一个点击浏览的物品通常会与下一个物品的联系较大，所以最后一个物品的特征权重应该会更大。由于Self-Attention模块在处理最后一个物品的嵌入向量的时候会将其与之前所有的其他物品嵌入向量做交互，因此最后一个物品的特征并没有特别关注。为了提升对这种浅层特征的提取能力，可以为模型增加残差连接操作，其主要思想是如果浅层特征对于目标学习有效的话，就直接将低层网络学习的浅层特征直接传递给输出层，而不用再经过深层网络提取复杂特征，残差连接的做法就是将浅层网络的输出建立旁路与输出层相连，跳过了部分中间复杂计算。
 
 \begin{figure}
@@ -169,19 +166,16 @@ Encoder用来处理输入序列$x_{1},x_{2},x_{3},\cdots ,x_{t-1},x_{t}$，将�
 \end{figure}
 
 \textbf{层次归一化Layer normalization}
-
 为了使得模型训练的时候更加容易收敛，减少训练时间，在深度神经网络的模型中加入归一化操作是一个比较常见的做法。在训练卷积神经网络时候，常见的操作是加入批量归一化(Batch Normalization)\upcite{Ioffe:2015:BNA:3045118.3045167}，批量归一化通过计算均值和方差将一个批量的输入数据装换到$[0,1]$之间，加速梯度下降，但其高度依赖批量的大小，同时也不适用于输入序列长度不固定的循环神经网络等模型。层次归一化(Layer Normalization)\upcite{ba2016layer}则不是在样本层面，而是将该层神经元的输入通过计算均值和方差转换到在$[0,1]$之间，这样的操作是跨特征计算的，与其他样本无关，因此可以使用任意大小的批量大小。
 \begin{align}
 	LN(x_i)=\alpha\times\frac{x_i-u_B}{\sqrt{\sigma_B^2+\epsilon}}+\beta
 \end{align}
 \textbf{Dropout}
-
 使用神经网络时，随着模型变得更大和更深，也带了过拟合的潜在风险，对于神经网络来说，除了在损失函数处加上L1和L2正则项之外，在模型的结构当中加入Dropout也是防止过拟合的常见操作之一，为了防止我们的模型过拟合、同时为了让训练更稳定，减少部分模型参数加速训练过程，在Self-Attention模块的输出之后加上Dropout操作：
 \begin{align}
 	\hat{y}=x+\text { Dropout }(\text {SA}(\text { LN }(x)))
 \end{align}
 \textbf{模型训练}
-
 最终模型根据输出序列是否为用户实际点击行为经过$Sigmoid(\cdot )$函数映射到$[0,1]$之间的概率，因此模型的优化目标为最小化如下的交叉熵损失函数：
 \begin{align}
 -\sum_{{u} \in \mathbb{U}} \sum_{t \in[1,2, \ldots, n]}\left[\log (\hat{y})+\sum_{\hat{s}_{u}^{t}\neq s_{u}^{t}} \log (1-\hat{y})\right]

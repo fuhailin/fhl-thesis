@@ -4,8 +4,8 @@
 \section{数据集介绍}
 
 为了比较上文提出的两个算法模型，分别从推荐结果的准确性、和算法训练与结果查询返回效率两个方面分别进行了两组实验。%
-因此需要设计两组实验分别从算法推荐准确性和性能两个方面进行验证。本文评估上述两个算法在两个来自真实%
-应用上的数据集，这些数据集都包涵用户与物品产生交互的时间戳：
+因此需要设计两组实验分别从算法推荐准确性和性能两个方面进行验证。本文评估了上述两个算法在两个来自真实%
+应用的数据集上，这些数据集都包涵用户与物品产生交互的时间戳：
 
 \textbf{MovieLens}：MovieLens\footnote{\url{https://grouplens.org/datasets/movielens/}}是%
 用来对推荐模型进行评估的最流行的基准数据集，它是由GroupLens研究组织从MovieLens网站收集的关于用户%
@@ -15,9 +15,9 @@ Movielens-1M。
 
 \textbf{Yoochoose}：Yoochoose\footnote{\url{http://2015.recsyschallenge.com}}数据集是%
 2015年推荐系统顶级会议RecSys举办的挑战赛RecSys Challenge 2015上公开使用的目标数据集。%
-Yoochoose包含了一个在线电子商务网站在6个月时间内用户所有的点击会话流和购买会话流。这里我只使用了%
+Yoochoose包含了一个在线电子商务网站在6个月时间内用户所有的点击会话流和购买会话流。这里本文只使用了%
 点击会话流数据集“yoochoose-clicks.dat”，其中每一行包含了一个点击交互行为，总共有33003944行，%
-这里我们抽取了其中的前100万行进行建模实验。%
+并抽取了其中的前100万行进行建模实验。%
 \begin{table}[]
   \centering
   \caption{序列数据集对比}
@@ -30,7 +30,7 @@ Yoochoose包含了一个在线电子商务网站在6个月时间内用户所有�
     \end{tabular}
 \end{table}
 对于每一种数据集，在特征工程处理部分，需要将其处理成按时间排列的序列，因此需要将交互行为按照时间戳进行预排序，%
-将排序好的交互行为按照其所属用户或会话流分组构成序列集合。图\ref{fig:feature_engine}为以Movielens-1M数据集%
+将排序好的交互行为按照其所属用户或会话流分组构成序列集合。图\ref{fig:feature_engine}以Movielens-1M数据集%
 为例，特征工程前后数据结构示意图，Yoochoose数据集特征工程与此相同。
 不同的算法使用的数据集划分策略不同，下文针对每种算法将详细描述数据集划分策略。具体实验数据明细如表格\ref{tab:datatable}所示。
 \begin{figure}[!htb]
@@ -55,7 +55,7 @@ Yoochoose包含了一个在线电子商务网站在6个月时间内用户所有�
 作为一个推荐模型，模型会对查询目标给出点击可能性最高的N个物品，对于本文提出的序列推荐形式，%
 模型的输入是$t$时刻及其以前的用户点击物品序列，需要的模型输出目标是$t+1$时刻用户可能点击%
 的物品，以$\hat{I}_{u}^{t+1}$表示，所以本文采用了$Precision@N$, $Recall@N$指标来评估%
-我们的模型，其计算形式如下：
+本文的模型，其计算形式如下：
 \begin{equation}
 Precision@N=\frac{\sum_{u}|\hat{I}_{u}^{t+1}\cap I_{u}^{t+1} |}{\left | \mathbb{U} \right |*N}
 \end{equation}
@@ -105,19 +105,19 @@ F1@N=\frac{2\times Precision@N\times Recall@N}{Precision@N+Recall@N}
 
 BiLSTM模型的实现基于开源深度学习框架Keras，以Tensorflow作为其后端。使用批量梯度下降法Adam作为优化器，并设置初始学习率$\alpha$为0.01，学习率衰减权重因子$\beta$为0.9。其他超参数本实验首先使用常见值作为初始值，为了得到更好的性能，使用网格搜索的形式自动寻找最优参数组合，但这会带来极大的计算量。经过多次尝试，本实验最终选定了以下超参数组合：嵌入层因子$|e|=100$，循环层神经元数目$H=200$，全连接层神经元数目$O=100$，梯度下降批量大小为32。在训练阶段为避免过拟合，当验证数据上经过3个batch损失函数仍没有下降则EarlyStopping。
 
-为了探求基于双向LSTM的序列感知算法需要的序列长度，将超参数固定之后本文也设置了对比实验探求不同序列长度对模型的影响，图\ref{fig:windows}显示了在MovieLens-1M数据集上输入序列长度分别从1\~10时，训练阶段EarlyStopping时最优的损失函数值。
+为了探求基于双向LSTM的序列感知算法需要的序列长度，将超参数固定之后本文也设置了对比实验探求不同序列长度对模型的影响，图\ref{fig:windows}显示了在MovieLens-1M数据集上输入序列长度分别从$1\sim 10$时，训练阶段EarlyStopping时最优的损失函数值。
 \begin{figure}[htb]%更改
   \centering
   \includegraphics[width=12cm]{Loss_timewindows.jpg}
-  \caption{BiLSTM在MovieLens-1M数据上不同序列长度的最小训练loss}
+  \caption{BiLSTM4Rec在MovieLens-1M数据上不同序列长度的最小训练loss}
   \label{fig:windows}
 \end{figure}
-通过图\ref{fig:windows}中可以看到，在不同的输入序列长度下，BiLSTM的性能有稍微为降低，为了模型的稳定性选取了中位值5作为最终序列长度。
+通过图\ref{fig:windows}中可以看到，在不同的输入序列长度下，BiLSTM的性能有稍微的降低，为了模型的稳定性选取了中位值5作为最终序列长度。
 图\ref{fig:BiLSTMloss}显示了固定时间窗口为5及其他超参数的情况下，训练集和测试集上的损失函数下降图。
 \begin{figure}[htb]%更改
   \centering
   \includegraphics[width=12cm]{model_loss-eps-converted-to.pdf}
-  \caption{BiLSTM在MovieLens-1M数据上不同序列长度的最小训练loss}
+  \caption{BiLSTM4Rec在MovieLens-1M数据上不同序列长度的最小训练loss}
   \label{fig:BiLSTMloss}
 \end{figure}
 
@@ -169,7 +169,7 @@ Transformer4Rec模型在MovieLens-1M上使用合适的学习率损失函数可�
 \label{table:result}
   \begin{tabular}{@{}lllllll@{}}
   \toprule
-  数据集名称                     & 测评指标      & POP      & GRU4Rec  & \textbf{BiLSTM} & Caser & \textbf{Self-Attention} \\ \midrule
+  数据集名称                     & 测评指标      & POP      & GRU4Rec  & \textbf{BiLSTM4Rec} & Caser & \textbf{Transformer4Rec} \\ \midrule
   \multirow{4}{*}{MovieLens-1M} & Recall@10    & 0.041390 & 0.109286 & 0.125679 & 0.1344 & 0.7055      \\
                                 & Precision@10 & 0.004139 & 0.010928 & 0.012567 & 0.0112 & 0.0705      \\
                                 & F1@10        & 0.007526 & 0.019870 & 0.023052 & 0.0244 & 0.1279      \\

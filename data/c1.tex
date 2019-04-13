@@ -41,14 +41,9 @@
 的特征信息挖掘两者之间的隐式联系，从而发掘出用户感兴趣的物品，
 以此来帮助用户快速的找到有感兴趣的物品，提升网络应用的流量及用户的黏性。%
 
-
-
-
-
-
 %
-本章节主要从传统机器学习和深度学习两个方面介绍现代推荐系统中常用的各种推荐算法，%
-从它们各自的特点分析现如今存在的问题。
+% 本章节主要从传统机器学习和深度学习两个方面介绍现代推荐系统中常用的各种推荐算法，%
+% 从它们各自的特点分析现如今存在的问题。
 
 \section{国内外研究现状}
 
@@ -71,7 +66,7 @@
 (User-based Collaborative Filtering，UBCF)和基于物品的协同过滤%
 (Item-based Collaborative Filtering，IBCF)。
 而基于模型的协同过滤则主要利用评分信息训练相应的模型，然后使用这个模型对未知数据进行预测，%
-这类算法有贝叶斯网络\upcite{Chen02abayesian}、聚类模型\upcite{ungar1998clustering}、%
+这类算法有贝叶斯网络\upcite{chien1999bayesian}、聚类模型\upcite{ungar1998clustering}、%
 概率矩阵分解\upcite{Salakhutdinov:2007:PMF:2981562.2981720}等等。
 在基于内容的推荐算法中仅利用了单个用户的行为和数据给出对用户的推荐，特别是物品的描述和用户的属性描述在内容推荐中起到了关键作用。基于内容的
 推荐精确度往往有限，还面临着严重的冷启动问题。
@@ -114,11 +109,10 @@ Xiangnan He等在2017 年提出的神经网络因子分解机（Neural Factoriza
 2018年Jianxun Lian等人提出了一个新颖的压缩交互网络（Compressed Interaction Network， CIN）的神经模型用于自动学习显式的高阶特征交互，然后将其与DNN模块并行集成，构造了一个名为极深因子分解机的模型（xDeepFM）\upcite{Lian:2018:XCE:3219819.3220023}用于同时以显式和隐式的方式自动学习高阶的特征交互。
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=\linewidth]{Deep_Cross.png}\\
+  \includegraphics[width=0.9\linewidth]{Deep_Cross.png}\\
   \caption{并行深度网络推荐模型之——Deep\&Cross网络结构图\upcite{Wang:2017:DCN:3124749.3124754}}
   \label{fig:Deep_Cross}
 \end{figure}
-
 在串行模型与并行模型之外，又有一类\textbf{综合并行结构与串行的结构}，如2018年Guorui Zhou等人先后提出了深度兴趣网络（Deep Interest Network，DIN）\upcite{Zhou:2018:DIN:3219819.3219823}和深度兴趣演化网络（Deep Interest Evolution Network ，DIEN）\upcite{zhou2018deep}，DIN的并行结构体现在对用户侧历史行为特征域和物品侧特征域并行嵌入，堆叠组合成的向量再输入到全连接神经网络中去。DIEN对DIN的改进在于并行结构的特征嵌入部分考虑到了用户兴趣的演化进程，其使用双层GRU对用户历史行为的序列进行建模，将建模后的向量一起并入堆叠向量当中。
 
 \subsection{序列感知推荐研究现状}
