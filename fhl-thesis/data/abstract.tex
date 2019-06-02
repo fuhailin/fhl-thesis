@@ -1,0 +1,38 @@
+﻿%!TEX root = ../document.tex
+\begin{cabstract}
+
+    随着互联网信息的不断增长，推荐系统已成为克服信息过载的有效策略。推荐系统作为帮助%
+    人们从浩如烟海的信息中发现自己所需的重要工具，在许多网络应用中被广泛集成，不仅%
+    辅助人们做出选择还帮助服务商提升了交易量，推荐系统的效用不容小觑，已成为信息社会%
+    日常生活的重要组成部分。推荐算法作为推荐系统背后的核心力量，支撑着推荐系统的表现。%
+    因此研究泛化能力强鲁棒性好的推荐算法一直是数据挖掘领域的热点。
+    在该领域内的研究通常基于构建用户与物品的交互矩阵，这样的算法空间复杂度过高，已逐渐被深度学习方法替代。
+    并且在现代推荐算法中，大多数方法都忽略了用户所消费物品之间的时序关系，基于深度学习的模型还需要构造大量的用户隐私相关的特征，本文讨论的序列感知推荐方法则避免了这些问题。
+
+    近年来，深度学习在计算机视觉和自然语言处理等许多研究领域引起了相当大的兴趣，这不%
+    仅源于其出色的大数据计算能力，还归功于其能从原始数据学习特征表达的迷人特性，这一%
+    影响早已扩散到了信息检索和推荐系统的研究领域。因此本文借用在自然语言处理领域表现
+    出色的序列建模算法，创新地引入推荐系统领域，提出了基于双向长短期记忆网络的新颖序列感知推荐算法BiLSTM4Rec
+    ，考虑到循环神经网络的并行效率问题，又引入自注意力机制提出了Transformer4Rec序列感知算法。两种算法都利用神经网络技术挖掘用户%
+    行为时序特征进行序列预测，并从推荐结果精确性和计算效率方面进行了%
+    分析，为现有推荐算法存在的瓶颈问题提出了可行的求解思路。
+
+    为了验证本文提出模型的性能，分别在真实的用户行为数据集Movielens，Yoochoose上%
+    进行了实验，实验结果表明，BiLSTM4Rec和Transformer4Rec的序列感知推荐模型，面对稀疏、大%
+    规模数据时，也能较好地反映用户的短期兴趣，并且Transformer4Rec在面临大数据量压力时效率方面更胜一筹。
+    % 迁移学习应用在推荐领域也能利用辅助信息提升推荐准确度。
+
+\end{cabstract}
+\ckeywords{推荐系统；序列建模；循环神经网络；注意力机制；数据挖掘}
+
+\begin{eabstract}
+With the continuous growth of Internet information, the recommendation system has become an effective strategy to overcome information overload. The recommendation system, as an important tool to help people find interest in the vast amount of information, has been widely integrated into many network applications, which not only helping people make choices but also helping service providers to increase the volume of transactions. The effectiveness of the recommendation system should not be underestimated. The recommendation system has been an important part of the daily life of the information society. The recommendation algorithm serves as the core force behind the recommendation system, it supports the performance of the recommendation system. Therefore, it is always a hotspot in the field of data mining to research the recommendation algorithm with strong generalization ability and strong robustness.
+    Research in this field is often based on building interaction matrices between users and items, such algorithms are too spatially complex and have been gradually replaced by deep learning methods.
+    However, in the modern recommendation algorithm, most methods ignore the time-series relationship between the items consumed by users, and the deep learning-based model also needs to construct a large number of user-private features. The sequence-aware recommendation method discussed in this paper avoids these problems.
+
+    In recent years, deep learning has attracted considerable interest in many fields of research, such as computer vision and natural language processing, not only because of its excellent big data computing power but also because of its fascinating properties of learning from the original data. This influence has long spread to the research field of information retrieval and recommendation systems. Therefore, this paper introduces the excellent sequence modeling algorithms in the field of natural language processing into the recommendation system field. A novel sequence-aware recommendation algorithm BiLSTM4Rec based on bidirectional LSTM networks is proposed. Considering the parallel efficiency problem of the cyclic neural network, a self-attention mechanism, Transformer4Rec, is introduced to propose the sequence perceptual problem. Both algorithms use neural network technology to mine user behavior time series features for sequence prediction. We analyze the accuracy and computational efficiency of recommendation results, and propose feasible solutions for the problems encountered by existing recommendation algorithms.
+
+    In order to verify the performance of the proposed model, experiments were carried out on the real user behavior dataset Movielens and Yoochoose. The experimental results show that the sequence-aware recommendation models,  BiLSTM4Rec and Transformer4Rec, are also acceptable in the situation of sparse and large-scale data. The location reflects the user's short-term interest, and Transformer4Rec is more efficient when facing big data.
+\end{eabstract}
+\ekeywords{Recommendation system; Sequence modeling; Recurrent neural network; Attention mechanism; Data mining}
+
